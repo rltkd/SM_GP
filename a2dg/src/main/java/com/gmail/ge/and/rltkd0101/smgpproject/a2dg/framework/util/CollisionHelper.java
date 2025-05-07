@@ -1,8 +1,8 @@
-package kr.ac.tukorea.ge.spgp2025.a2dg.framework.util;
+package com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.util;
 
 import android.graphics.RectF;
 
-import kr.ac.tukorea.ge.spgp2025.a2dg.framework.interfaces.IBoxCollidable;
+import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.interfaces.IBoxCollidable;
 
 public class CollisionHelper {
     public static boolean collides(IBoxCollidable obj1, IBoxCollidable obj2) {

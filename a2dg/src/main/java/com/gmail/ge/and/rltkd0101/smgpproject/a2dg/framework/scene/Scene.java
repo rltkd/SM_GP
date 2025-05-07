@@ -1,4 +1,4 @@
-package kr.ac.tukorea.ge.spgp2025.a2dg.framework.scene;
+package com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.scene;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -10,13 +10,13 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import kr.ac.tukorea.ge.spgp2025.a2dg.framework.interfaces.IBoxCollidable;
-import kr.ac.tukorea.ge.spgp2025.a2dg.framework.interfaces.ILayerProvider;
-import kr.ac.tukorea.ge.spgp2025.a2dg.framework.interfaces.IRecyclable;
-import kr.ac.tukorea.ge.spgp2025.a2dg.framework.interfaces.ITouchable;
-import kr.ac.tukorea.ge.spgp2025.a2dg.framework.view.GameView;
-import kr.ac.tukorea.ge.spgp2025.a2dg.framework.interfaces.IGameObject;
-import kr.ac.tukorea.ge.spgp2025.a2dg.framework.view.Metrics;
+import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.interfaces.IBoxCollidable;
+import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.interfaces.ILayerProvider;
+import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.interfaces.IRecyclable;
+import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.interfaces.ITouchable;
+import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.view.GameView;
+import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.interfaces.IGameObject;
+import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.view.Metrics;
 
 public class Scene {
     private static final String TAG = Scene.class.getSimpleName();

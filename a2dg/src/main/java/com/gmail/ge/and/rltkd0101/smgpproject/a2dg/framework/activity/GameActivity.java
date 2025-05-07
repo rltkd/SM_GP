@@ -1,4 +1,4 @@
-package kr.ac.tukorea.ge.spgp2025.a2dg.framework.activity;
+package com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.activity;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -10,7 +10,7 @@ import android.view.WindowInsetsController;
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
 
-import kr.ac.tukorea.ge.spgp2025.a2dg.framework.view.GameView;
+import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.view.GameView;
 
 public class GameActivity extends AppCompatActivity {
 

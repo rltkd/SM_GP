@@ -1,4 +1,4 @@
-package kr.ac.tukorea.ge.spgp2025.a2dg.framework.objects;
+package com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.objects;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -6,10 +6,10 @@ import android.graphics.RectF;
 import android.util.Log;
 import android.view.MotionEvent;
 
-import kr.ac.tukorea.ge.spgp2025.a2dg.framework.view.Metrics;
-import kr.ac.tukorea.ge.spgp2025.a2dg.framework.util.RectUtil;
-import kr.ac.tukorea.ge.spgp2025.a2dg.framework.res.BitmapPool;
-import kr.ac.tukorea.ge.spgp2025.a2dg.framework.interfaces.IGameObject;
+import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.view.Metrics;
+import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.util.RectUtil;
+import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.res.BitmapPool;
+import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.interfaces.IGameObject;
 
 public class JoyStick implements IGameObject {
     private static final String TAG = JoyStick.class.getSimpleName();

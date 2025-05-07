@@ -1,4 +1,4 @@
-package kr.ac.tukorea.ge.spgp2025.a2dg;
+package com.gmail.ge.and.rltkd0101.smgpproject.a2dg;
 
 import android.content.Context;
 

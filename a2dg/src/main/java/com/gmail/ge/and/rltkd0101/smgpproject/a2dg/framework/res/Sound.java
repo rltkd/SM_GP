@@ -1,4 +1,4 @@
-package kr.ac.tukorea.ge.spgp2025.a2dg.framework.res;
+package com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.res;
 
 import android.media.AudioAttributes;
 import android.media.MediaPlayer;
@@ -6,7 +6,7 @@ import android.media.SoundPool;
 
 import java.util.HashMap;
 
-import kr.ac.tukorea.ge.spgp2025.a2dg.framework.view.GameView;
+import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.view.GameView;
 
 public class Sound {
     protected static MediaPlayer mediaPlayer;

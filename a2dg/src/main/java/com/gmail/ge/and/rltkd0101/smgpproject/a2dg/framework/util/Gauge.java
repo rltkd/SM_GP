@@ -1,4 +1,4 @@
-package kr.ac.tukorea.ge.spgp2025.a2dg.framework.util;
+package com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.util;
 
 import android.content.res.Resources;
 import android.graphics.Canvas;
@@ -6,7 +6,7 @@ import android.graphics.Paint;
 
 import androidx.core.content.res.ResourcesCompat;
 
-import kr.ac.tukorea.ge.spgp2025.a2dg.framework.view.GameView;
+import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.view.GameView;
 
 public class Gauge {
     private final Paint fgPaint = new Paint();

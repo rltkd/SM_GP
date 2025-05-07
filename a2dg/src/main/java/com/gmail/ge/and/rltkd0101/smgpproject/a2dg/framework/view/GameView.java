@@ -1,4 +1,4 @@
-package kr.ac.tukorea.ge.spgp2025.a2dg.framework.view;
+package com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.view;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -16,7 +16,7 @@ import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 
-import kr.ac.tukorea.ge.spgp2025.a2dg.framework.scene.Scene;
+import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.scene.Scene;
 
 public class GameView extends View implements Choreographer.FrameCallback {
     private static final String TAG = GameView.class.getSimpleName();

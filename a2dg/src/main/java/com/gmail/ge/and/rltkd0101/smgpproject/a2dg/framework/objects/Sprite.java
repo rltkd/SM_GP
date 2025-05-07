@@ -1,4 +1,4 @@
-package kr.ac.tukorea.ge.spgp2025.a2dg.framework.objects;
+package com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.objects;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -8,10 +8,10 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
-import kr.ac.tukorea.ge.spgp2025.a2dg.framework.interfaces.IGameObject;
-import kr.ac.tukorea.ge.spgp2025.a2dg.framework.res.BitmapPool;
-import kr.ac.tukorea.ge.spgp2025.a2dg.framework.util.RectUtil;
-import kr.ac.tukorea.ge.spgp2025.a2dg.framework.view.GameView;
+import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.interfaces.IGameObject;
+import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.res.BitmapPool;
+import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.util.RectUtil;
+import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.view.GameView;
 
 public class Sprite implements IGameObject {
     private static final String TAG = Sprite.class.getSimpleName();

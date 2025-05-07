@@ -1,10 +1,10 @@
-package kr.ac.tukorea.ge.spgp2025.a2dg.framework.objects;
+package com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.objects;
 
 import android.util.Log;
 import android.view.MotionEvent;
 
-import kr.ac.tukorea.ge.spgp2025.a2dg.framework.interfaces.ITouchable;
-import kr.ac.tukorea.ge.spgp2025.a2dg.framework.view.Metrics;
+import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.interfaces.ITouchable;
+import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.view.Metrics;
 
 public class Button extends Sprite implements ITouchable {
     public interface OnTouchListener {

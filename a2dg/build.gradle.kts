@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "kr.ac.tukorea.ge.spgp2025.a2dg"
+    namespace = "com.gmail.ge.and.rltkd0101.smggproject"
     compileSdk = 35
 
     defaultConfig {
