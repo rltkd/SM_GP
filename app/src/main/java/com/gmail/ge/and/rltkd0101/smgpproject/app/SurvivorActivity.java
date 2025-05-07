@@ -15,6 +15,6 @@ public class SurvivorActivity extends GameActivity {
         GameView.drawsDebugStuffs = BuildConfig.DEBUG;
         Metrics.setGameSize(1600, 900);
         super.onCreate(savedInstanceState);
-        new Scene().push();
+        new MainScene().push();
     }
 }
