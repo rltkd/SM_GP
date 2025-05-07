@@ -120,9 +120,13 @@ public class GameView extends View implements Choreographer.FrameCallback {
     protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
         canvas.save();
-        Metrics.concat(canvas);
+        //Metrics.concat(canvas);
         // 반드시 성공적인 빌드가 진행된 후에 BuildConfig.java 가 생성되므로
         // 아래 코드가 문제가 되면 잠시 삭제해서 빌드만 성공시키고 다시 살려두어도 된다.
+        float scaleX = (float) canvas.getWidth() / Metrics.width;
+        float scaleY = (float) canvas.getHeight() / Metrics.height;
+        canvas.scale(scaleX, scaleY);
+        
         if (drawsDebugStuffs) {
             drawDebugBackground(canvas);
         }
