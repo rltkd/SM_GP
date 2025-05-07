@@ -126,7 +126,7 @@ public class GameView extends View implements Choreographer.FrameCallback {
         float scaleX = (float) canvas.getWidth() / Metrics.width;
         float scaleY = (float) canvas.getHeight() / Metrics.height;
         canvas.scale(scaleX, scaleY);
-        
+
         if (drawsDebugStuffs) {
             drawDebugBackground(canvas);
         }
