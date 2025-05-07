@@ -13,11 +13,13 @@
         android:theme="@style/Theme.SmgpProject"
         tools:targetApi="31">
         <activity
-            android:name=".app.Game"
-            android:exported="false" />
+            android:name=".app.GameActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:exported="true" />
         <activity
             android:name=".app.MainActivity"
-            android:exported="true">
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
