@@ -21,6 +21,7 @@ class MainScene extends Scene {
                 Metrics.width / 2, Metrics.height / 2,
                 Metrics.width, Metrics.height
         ));
-        add(Layer.Player,new player());
+        Player player = new Player(Player.WeaponType.SWORD);
+        add(Layer.Player, player);
     }
 }
