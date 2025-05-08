@@ -7,7 +7,7 @@ import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.view.Metrics;
 
 class MainScene extends Scene {
     public enum Layer {
-        bg, Player;// 배경
+        bg, Player,UI;// 배경
         // 다른 레이어...
         public static final int COUNT = values().length;
     }
@@ -21,7 +21,13 @@ class MainScene extends Scene {
                 Metrics.width / 2, Metrics.height / 2,
                 Metrics.width, Metrics.height
         ));
-        Player player = new Player(Player.WeaponType.SWORD);
+        Player player = new Player(Player.WeaponType.HANDGUN);
         add(Layer.Player, player);
+        Joystick joystick = new Joystick(player);
+        add(Layer.UI, joystick);
+    }
+    @Override
+    protected int getTouchLayerIndex() {
+        return Layer.UI.ordinal(); // UI 레이어에서 터치 받음
     }
 }
