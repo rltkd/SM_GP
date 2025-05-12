@@ -25,10 +25,10 @@ public class Player extends Sprite {
     private static int getImageResId(WeaponType weaponType) {
         switch (weaponType) {
             case HANDGUN:
-                return R.mipmap.idle_handgun;
+                return R.mipmap.handgun;
             case SWORD:
             default:
-                return R.mipmap.idle_sword;
+                return R.mipmap.sword;
         }
     }
 
