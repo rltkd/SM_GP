@@ -19,7 +19,7 @@ class MainScene extends Scene {
                 Metrics.width / 2, Metrics.height / 2,
                 Metrics.width, Metrics.height
         )); 
-        Player player = new Player(Player.WeaponType.HANDGUN);
+        Player player = new Player(Player.WeaponType.SWORD);
         add(Layer.Player, player);
         Joystick joystick = new Joystick(player);
         add(Layer.UI, joystick);
