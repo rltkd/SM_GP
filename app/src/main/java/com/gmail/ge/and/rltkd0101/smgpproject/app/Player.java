@@ -2,6 +2,7 @@ package com.gmail.ge.and.rltkd0101.smgpproject.app;
 
 import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.RectF;
 import android.util.Log;
 
 import com.gmail.ge.and.rltkd0101.smgpproject.R;
@@ -20,7 +21,7 @@ public class Player extends AnimSprite {
     private WeaponType weaponType;
 
     public Player(WeaponType weaponType) {
-        super(R.mipmap.sword_attack_sheet, 8f, 3); // 3프레임, 8fps
+        super(R.mipmap.sword_attack_sheet, 8f, 3); // 3프레임, 초당 8fps
         this.weaponType = weaponType;
         setPosition(800f, 450f, 150f, 150f);
     }
@@ -35,17 +36,18 @@ public class Player extends AnimSprite {
 
     @Override
     public void draw(Canvas canvas) {
-        Log.d("Player", "draw 호출됨: x=" + x + " y=" + y + " width=" + width + " height=" + height);
+        long now = System.currentTimeMillis();
+        float time = (now - createdOn) / 1000.0f;
+        int frameIndex = Math.round(time * fps) % frameCount;
+        srcRect.set(frameIndex * frameWidth, 0, (frameIndex + 1) * frameWidth, frameHeight);
+
         if (facingLeft) {
-            Matrix m = new Matrix();
-            m.setScale(-1, 1);
-            m.postTranslate(x + width, y);
             canvas.save();
-            canvas.concat(m);
-            super.draw(canvas); // 꼭 호출해야 AnimSprite가 프레임 계산함
+            canvas.scale(-1, 1, x, y);
+            canvas.drawBitmap(bitmap, srcRect, dstRect, null);
             canvas.restore();
         } else {
-            super.draw(canvas);
+            super.draw(canvas); // 오른쪽은 AnimSprite 기본 처리
         }
     }
 
