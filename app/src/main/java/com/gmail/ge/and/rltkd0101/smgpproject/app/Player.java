@@ -5,6 +5,14 @@ import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.objects.Sprite;
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.view.GameView;
 
 public class Player extends Sprite {
+    public float getX() {
+        return x;
+    }
+
+    public float getY(){
+        return y;
+    }
+
     public enum WeaponType {
         SWORD,
         HANDGUN

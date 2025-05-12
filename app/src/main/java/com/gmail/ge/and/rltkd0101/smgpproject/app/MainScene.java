@@ -23,6 +23,7 @@ class MainScene extends Scene {
         add(Layer.Player, player);
         Joystick joystick = new Joystick(player);
         add(Layer.UI, joystick);
+        add(Layer.enemy,new EnemySpawner(player));
     }
     @Override
     protected int getTouchLayerIndex() {
