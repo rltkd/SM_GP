@@ -21,6 +21,11 @@ public class Player extends AnimSprite implements IBoxCollidable {
 
     private int hp = 100;
 
+    // 초당 최대 데미지 제한을 위한 필드
+    private float damageTimer = 0f;
+    private int damageThisSecond = 0;
+    private static final int MAX_DAMAGE_PER_SECOND = 6;
+
     public Player(WeaponType weaponType) {
         super(R.mipmap.sword_attack_sheet, 8f, 3); // 3프레임, 초당 8fps
         this.weaponType = weaponType;
@@ -33,13 +38,19 @@ public class Player extends AnimSprite implements IBoxCollidable {
         x += dx * distance;
         y += dy * distance;
 
-        // 이동 경계 제한
+        // 이동 제한
         float halfW = width / 2f;
         float halfH = height / 2f;
         x = Math.max(halfW, Math.min(x, 3000f - halfW));
         y = Math.max(halfH, Math.min(y, 2000f - halfH));
-
         setPosition(x, y, width, height);
+
+        // 초당 데미지 누적 초기화
+        damageTimer += GameView.frameTime;
+        if (damageTimer >= 1.0f) {
+            damageTimer = 0f;
+            damageThisSecond = 0;
+        }
     }
 
     @Override
@@ -86,44 +97,64 @@ public class Player extends AnimSprite implements IBoxCollidable {
         return y;
     }
 
-    // 공격 범위: 방향 기준 앞쪽 사각형
     public RectF getAttackBox() {
-        float w = 60f;
-        float h = 40f;
+        if (weaponType == WeaponType.HANDGUN) {
+            return new RectF(0, 0, 0, 0); // or return null; and null 체크 필요
+        }
+
+        // 근접 무기 (SWORD)의 공격 범위
+        float w = 90f;
+        float h = 0f;
+        float overlap = 30f; // 히트박스와 겹치게 보정
+
         if (facingLeft) {
             return new RectF(
-                    x - width / 2 - w, y - h / 2,
-                    x - width / 2, y + h / 2
+                    x - width / 2 - w + overlap, y - h / 2,
+                    x - width / 2 + overlap, y + h / 2
             );
         } else {
             return new RectF(
-                    x + width / 2, y - h / 2,
-                    x + width / 2 + w, y + h / 2
+                    x + width / 2 - overlap, y - h / 2,
+                    x + width / 2 + w - overlap, y + h / 2
             );
         }
     }
 
-    // 피격 범위: 몸 전체
+
     public RectF getHitBox() {
+        float scale = 0.7f; // 히트박스를 60% 크기로 줄임
+        float w = width * scale;
+        float h = height * scale;
+
         return new RectF(
-                x - width / 2, y - height / 2,
-                x + width / 2, y + height / 2
+                x - w / 2, y - h / 2,
+                x + w / 2, y + h / 2
         );
     }
 
-    // 충돌 시스템 통합용
+
     @Override
     public RectF getCollisionRect() {
         return getHitBox();
     }
 
-    public void takeDamage() {
-        hp--;
+    public void takeDamage(int damage) {
+        if (damageThisSecond + damage > MAX_DAMAGE_PER_SECOND) return;
+
+        hp -= damage;
+        damageThisSecond += damage;
+
         System.out.println("Player hit! HP: " + hp);
 
         if (hp <= 0) {
             System.out.println("Player died!");
-            // TODO: 게임 오버 처리 (씬 변경, 재시작 등)
+            // TODO: Game over 처리
         }
+    }
+
+    public void reset() {
+        hp = 100;
+        damageTimer = 0f;
+        damageThisSecond = 0;
     }
 }

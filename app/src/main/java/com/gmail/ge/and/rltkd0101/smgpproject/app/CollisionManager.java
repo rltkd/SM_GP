@@ -1,5 +1,7 @@
 package com.gmail.ge.and.rltkd0101.smgpproject.app;
 
+import android.graphics.RectF;
+
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.interfaces.IGameObject;
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.scene.Scene;
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.util.CollisionHelper;
@@ -10,17 +12,21 @@ import java.util.stream.Collectors;
 public class CollisionManager {
 
     public static void handlePlayerAttack(Scene scene, Player player) {
+        RectF attackBox = player.getAttackBox();
+        if (attackBox == null || attackBox.isEmpty()) return; // ✅ null 또는 0x0 체크
+
         for (Enemy enemy : getActiveEnemies(scene)) {
-            if (CollisionHelper.collides(enemy.getCollisionRect(), player.getAttackBox())) {
+            if (CollisionHelper.collides(enemy.getCollisionRect(), attackBox)) {
                 enemy.hit();
             }
         }
     }
 
+
     public static void handleEnemyCollision(Scene scene, Player player) {
         for (Enemy enemy : getActiveEnemies(scene)) {
             if (CollisionHelper.collides(enemy, player)) {
-                player.takeDamage();
+                player.takeDamage(1);
             }
         }
     }
@@ -36,4 +42,6 @@ public class CollisionManager {
                 .filter(Enemy::isActive)
                 .collect(Collectors.toList()); // ✅ Android 호환 방식
     }
+
 }
+
