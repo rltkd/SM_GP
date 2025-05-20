@@ -9,6 +9,25 @@ import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.objects.AnimSprite;
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.view.GameView;
 
 public class Player extends AnimSprite implements IBoxCollidable {
+    private float hp = 100f;
+    private static final float MAX_HP = 100f;
+
+    public float getHpRatio() {
+        return hp / MAX_HP;
+    }
+
+    public int getHp() {
+        return (int) hp; // UI 표기용
+    }
+
+    public float getHpRaw() {
+        return hp; // 내부 계산 또는 이펙트용
+    }
+
+    public float getMaxHp() {
+        return MAX_HP;
+    }
+
     public enum WeaponType {
         SWORD,
         HANDGUN
@@ -19,7 +38,6 @@ public class Player extends AnimSprite implements IBoxCollidable {
     private boolean facingLeft = false;
     private WeaponType weaponType;
 
-    private int hp = 100;
 
     // 초당 최대 데미지 제한을 위한 필드
     private float damageTimer = 0f;
@@ -104,7 +122,7 @@ public class Player extends AnimSprite implements IBoxCollidable {
 
         // 근접 무기 (SWORD)의 공격 범위
         float w = 90f;
-        float h = 0f;
+        float h = 40f;
         float overlap = 30f; // 히트박스와 겹치게 보정
 
         if (facingLeft) {
@@ -138,22 +156,25 @@ public class Player extends AnimSprite implements IBoxCollidable {
         return getHitBox();
     }
 
-    public void takeDamage(int damage) {
+    public void takeDamage(float damage) {
         if (damageThisSecond + damage > MAX_DAMAGE_PER_SECOND) return;
 
         hp -= damage;
         damageThisSecond += damage;
 
-        System.out.println("Player hit! HP: " + hp);
+        if (hp < 0f) hp = 0f;
 
-        if (hp <= 0) {
+        System.out.println("Player hit! HP: " + (int) hp);
+
+        if (hp <= 0f) {
             System.out.println("Player died!");
-            // TODO: Game over 처리
+            // TODO: Game Over 처리
         }
     }
 
+
     public void reset() {
-        hp = 100;
+        hp = getMaxHp();
         damageTimer = 0f;
         damageThisSecond = 0;
     }

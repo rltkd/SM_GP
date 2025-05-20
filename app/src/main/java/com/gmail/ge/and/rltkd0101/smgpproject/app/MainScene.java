@@ -8,6 +8,7 @@ import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.view.Metrics;
 
 class MainScene extends Scene {
     private Player player;
+    private HpBar hpBar;
     public enum Layer {
         bg, Player,UI, enemy;
         public static final int COUNT = values().length;
@@ -23,6 +24,8 @@ class MainScene extends Scene {
         )); 
         player = new Player(Player.WeaponType.SWORD);
         add(Layer.Player, player);
+        hpBar = new HpBar(player);
+        add(Layer.UI,hpBar);
         Joystick joystick = new Joystick(player);
         add(Layer.UI, joystick);
         add(Layer.enemy,new EnemySpawner(player));
