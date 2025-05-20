@@ -107,8 +107,8 @@ public class Enemy extends Sprite implements IRecyclable, IBoxCollidable {
         return getHitBox();
     }
 
-    public void hit() {
-        hp--;
+    public void hit(float damage) {
+        hp -= damage;
         if (hp <= 0) {
             Scene.top().remove(MainScene.Layer.enemy, this); // ♻️ 제거 및 재활용
         }

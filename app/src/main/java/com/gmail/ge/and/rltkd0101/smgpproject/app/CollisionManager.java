@@ -17,7 +17,7 @@ public class CollisionManager {
 
         for (Enemy enemy : getActiveEnemies(scene)) {
             if (CollisionHelper.collides(enemy.getCollisionRect(), attackBox)) {
-                enemy.hit();
+                enemy.hit(player.getDamage());
             }
         }
     }

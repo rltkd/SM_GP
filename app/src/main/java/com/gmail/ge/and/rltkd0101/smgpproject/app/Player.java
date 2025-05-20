@@ -11,6 +11,7 @@ import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.view.GameView;
 public class Player extends AnimSprite implements IBoxCollidable {
     private float hp = 100f;
     private static final float MAX_HP = 100f;
+    private float damage= 5f;
 
     public float getHpRatio() {
         return hp / MAX_HP;
@@ -178,4 +179,14 @@ public class Player extends AnimSprite implements IBoxCollidable {
         damageTimer = 0f;
         damageThisSecond = 0;
     }
+
+    public float getDamage(){
+        return damage;
+    }
+
+    public void setDamage(float damage){
+        this.damage= damage;
+    }
+
+
 }
