@@ -87,4 +87,32 @@ public class Player extends AnimSprite {
     public float getY() {
         return y;
     }
+
+    // 공격 범위: 방향에 따라 위치 바뀌는 박스
+    public RectF getAttackBox() {
+        float w = 60f; // 공격 범위 너비 (업그레이드 시 증가 가능)
+        float h = 40f; // 공격 범위 높이
+
+        if (facingLeft) {
+            return new RectF(
+                    x - width / 2 - w, y - h / 2,
+                    x - width / 2, y + h / 2
+            );
+        } else {
+            return new RectF(
+                    x + width / 2, y - h / 2,
+                    x + width / 2 + w, y + h / 2
+            );
+        }
+    }
+
+    // 피격 범위: 몸 전체 감싸는 박스
+    public RectF getHitBox() {
+        return new RectF(
+                x - width / 2, y - height / 2,
+                x + width / 2, y + height / 2
+        );
+    }
 }
+
+

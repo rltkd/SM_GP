@@ -3,6 +3,7 @@ package com.gmail.ge.and.rltkd0101.smgpproject.app;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.RectF;
 
 import com.gmail.ge.and.rltkd0101.smgpproject.R;
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.interfaces.IGameObject;
@@ -83,4 +84,16 @@ public class Enemy extends Sprite implements IRecyclable {
     public EnemyType getType() {
         return type;
     }
+
+    public boolean checkHit(RectF attackBox) {
+        return RectF.intersects(attackBox, getHitBox());
+    }
+
+    public RectF getHitBox() {
+        return new RectF(
+                x - width / 2, y - height / 2,
+                x + width / 2, y + height / 2
+        );
+    }
+
 }
