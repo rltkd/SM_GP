@@ -1,8 +1,7 @@
 package com.gmail.ge.and.rltkd0101.smgpproject.app;
 
-import android.os.Bundle;
 import android.content.Intent;
-import android.view.MotionEvent;
+import android.os.Bundle;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;

@@ -11,18 +11,18 @@ import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.view.GameView;
 public class Player extends AnimSprite implements IBoxCollidable {
     private float hp = 100f;
     private static final float MAX_HP = 100f;
-    private float damage= 5f;
+    private float damage = 3f;
 
     public float getHpRatio() {
         return hp / MAX_HP;
     }
 
     public int getHp() {
-        return (int) hp; // UI 표기용
+        return (int) hp;
     }
 
     public float getHpRaw() {
-        return hp; // 내부 계산 또는 이펙트용
+        return hp;
     }
 
     public float getMaxHp() {
@@ -35,36 +35,42 @@ public class Player extends AnimSprite implements IBoxCollidable {
     }
 
     private float dx = 0, dy = 0;
-    private float speed = 300f;
     private boolean facingLeft = false;
-    private WeaponType weaponType;
+    private final WeaponType weaponType;
 
-
-    // 초당 최대 데미지 제한을 위한 필드
     private float damageTimer = 0f;
     private int damageThisSecond = 0;
     private static final int MAX_DAMAGE_PER_SECOND = 6;
 
     public Player(WeaponType weaponType) {
-        super(R.mipmap.sword_attack_sheet, 8f, 3); // 3프레임, 초당 8fps
+        super(R.mipmap.sword_attack_sheet, 8f, 3);
         this.weaponType = weaponType;
         setPosition(1500f, 1000f, 150f, 150f);
     }
 
     @Override
     public void update() {
+        updateMovement();
+        clampPosition();
+        updateDamageCooldown();
+    }
+
+    private void updateMovement() {
+        float speed = 250f;
         float distance = speed * GameView.frameTime;
         x += dx * distance;
         y += dy * distance;
+    }
 
-        // 이동 제한
+    private void clampPosition() {
         float halfW = width / 2f;
         float halfH = height / 2f;
         x = Math.max(halfW, Math.min(x, 3000f - halfW));
         y = Math.max(halfH, Math.min(y, 2000f - halfH));
         setPosition(x, y, width, height);
+    }
 
-        // 초당 데미지 누적 초기화
+    private void updateDamageCooldown() {
         damageTimer += GameView.frameTime;
         if (damageTimer >= 1.0f) {
             damageTimer = 0f;
@@ -118,13 +124,12 @@ public class Player extends AnimSprite implements IBoxCollidable {
 
     public RectF getAttackBox() {
         if (weaponType == WeaponType.HANDGUN) {
-            return new RectF(0, 0, 0, 0); // or return null; and null 체크 필요
+            return new RectF(0, 0, 0, 0);
         }
 
-        // 근접 무기 (SWORD)의 공격 범위
         float w = 90f;
         float h = 40f;
-        float overlap = 30f; // 히트박스와 겹치게 보정
+        float overlap = 30f;
 
         if (facingLeft) {
             return new RectF(
@@ -139,9 +144,8 @@ public class Player extends AnimSprite implements IBoxCollidable {
         }
     }
 
-
     public RectF getHitBox() {
-        float scale = 0.7f; // 히트박스를 60% 크기로 줄임
+        float scale = 0.7f;
         float w = width * scale;
         float h = height * scale;
 
@@ -150,7 +154,6 @@ public class Player extends AnimSprite implements IBoxCollidable {
                 x + w / 2, y + h / 2
         );
     }
-
 
     @Override
     public RectF getCollisionRect() {
@@ -161,7 +164,7 @@ public class Player extends AnimSprite implements IBoxCollidable {
         if (damageThisSecond + damage > MAX_DAMAGE_PER_SECOND) return;
 
         hp -= damage;
-        damageThisSecond += damage;
+        damageThisSecond += (int) damage;
 
         if (hp < 0f) hp = 0f;
 
@@ -173,20 +176,17 @@ public class Player extends AnimSprite implements IBoxCollidable {
         }
     }
 
-
     public void reset() {
         hp = getMaxHp();
         damageTimer = 0f;
         damageThisSecond = 0;
     }
 
-    public float getDamage(){
+    public float getDamage() {
         return damage;
     }
 
-    public void setDamage(float damage){
-        this.damage= damage;
+    public void setDamage(float damage) {
+        this.damage = damage;
     }
-
-
 }

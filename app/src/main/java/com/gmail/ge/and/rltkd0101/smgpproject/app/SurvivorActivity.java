@@ -4,7 +4,6 @@ import android.os.Bundle;
 
 import com.gmail.ge.and.rltkd0101.smgpproject.BuildConfig;
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.activity.GameActivity;
-import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.scene.Scene;
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.view.GameView;
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.view.Metrics;
 

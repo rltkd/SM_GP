@@ -4,12 +4,11 @@ import android.graphics.Canvas;
 import android.graphics.RectF;
 
 import com.gmail.ge.and.rltkd0101.smgpproject.R;
-import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.interfaces.IGameObject;
-import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.interfaces.IRecyclable;
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.interfaces.IBoxCollidable;
+import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.interfaces.IRecyclable;
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.objects.Sprite;
-import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.view.GameView;
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.scene.Scene;
+import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.view.GameView;
 
 public class Enemy extends Sprite implements IRecyclable, IBoxCollidable {
     public enum EnemyType {
@@ -22,8 +21,12 @@ public class Enemy extends Sprite implements IRecyclable, IBoxCollidable {
     private EnemyType type;
     private int hp;
 
+    // 피격 쿨타임 + 넉백 관련
+    private float hitCooldown = 0f;
+    private static final float HIT_COOLDOWN_TIME = 0.3f;
+
     public Enemy() {
-        super(R.mipmap.slime); // 기본값: SLIME
+        super(R.mipmap.slime); // 기본 이미지
     }
 
     public void revive(float x, float y, Player target, EnemyType type) {
@@ -37,15 +40,15 @@ public class Enemy extends Sprite implements IRecyclable, IBoxCollidable {
                 this.speed = 100f;
                 this.hp = 10;
                 break;
-/*            case ZOMBIE:
+         /*   case ZOMBIE:
                 setImageResourceId(R.mipmap.zombie);
                 this.speed = 60f;
-                this.hp = 3;
+                this.hp = 30;
                 break;
             case GHOST:
                 setImageResourceId(R.mipmap.ghost);
                 this.speed = 140f;
-                this.hp = 2;
+                this.hp = 5;
                 break;*/
         }
 
@@ -61,20 +64,36 @@ public class Enemy extends Sprite implements IRecyclable, IBoxCollidable {
 
     @Override
     public void update() {
-        if (!active || target == null) return;
+        if (!isReadyToMove()) return;
 
+        updateHitCooldown();
+        moveTowardsTarget();
+    }
+
+    private boolean isReadyToMove() {
+        return active && target != null;
+    }
+
+    private void updateHitCooldown() {
+        if (hitCooldown > 0f) {
+            hitCooldown -= GameView.frameTime;
+        }
+    }
+
+    private void moveTowardsTarget() {
         float dx = target.getX() - x;
         float dy = target.getY() - y;
         float dist = (float) Math.sqrt(dx * dx + dy * dy);
+        if (dist <= 1f) return;
 
-        if (dist > 1f) {
-            float normX = dx / dist;
-            float normY = dy / dist;
-            float move = speed * GameView.frameTime;
-            x += normX * move;
-            y += normY * move;
-            setPosition(x, y, width, height);
-        }
+        float normX = dx / dist;
+        float normY = dy / dist;
+        float move = speed * GameView.frameTime;
+
+        x += normX * move;
+        y += normY * move;
+
+        setPosition(x, y, width, height);
     }
 
     @Override
@@ -108,9 +127,34 @@ public class Enemy extends Sprite implements IRecyclable, IBoxCollidable {
     }
 
     public void hit(float damage) {
+        if (hitCooldown > 0f) return;
+
         hp -= damage;
+        hitCooldown = HIT_COOLDOWN_TIME;
+
+        applyKnockbackFrom(target);
+
         if (hp <= 0) {
-            Scene.top().remove(MainScene.Layer.enemy, this); // ♻️ 제거 및 재활용
+            Scene.top().remove(MainScene.Layer.enemy, this);
+        }
+    }
+
+    private void applyKnockbackFrom(Player target) {
+        if (target == null) return;
+
+        float dx = x - target.getX();
+        float dy = y - target.getY();
+        float dist = (float) Math.sqrt(dx * dx + dy * dy);
+
+        if (dist > 0.001f) {
+            float knockback = 30f; // 넉백 거리
+            dx = (dx / dist) * knockback;
+            dy = (dy / dist) * knockback;
+
+            x += dx;
+            y += dy;
+
+            setPosition(x, y, width, height);
         }
     }
 }

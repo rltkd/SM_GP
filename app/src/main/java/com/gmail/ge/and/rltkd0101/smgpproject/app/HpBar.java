@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 
-import com.gmail.ge.and.rltkd0101.smgpproject.app.Player;
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.interfaces.IGameObject;
 
 public class HpBar implements IGameObject {

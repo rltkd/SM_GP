@@ -3,8 +3,6 @@ package com.gmail.ge.and.rltkd0101.smgpproject.app;
 import com.gmail.ge.and.rltkd0101.smgpproject.R;
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.objects.Sprite;
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.scene.Scene;
-import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.view.GameView;
-import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.view.Metrics;
 
 class MainScene extends Scene {
     private Player player;
