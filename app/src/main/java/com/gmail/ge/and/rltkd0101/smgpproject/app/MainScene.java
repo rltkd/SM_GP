@@ -15,9 +15,9 @@ class MainScene extends Scene {
         initLayers(Layer.COUNT);
 
         add(Layer.bg, new Sprite(
-                R.mipmap.background1,
-                Metrics.width / 2, Metrics.height / 2,
-                Metrics.width, Metrics.height
+                R.mipmap.background,
+               1500,1000,
+                3000,2000
         )); 
         Player player = new Player(Player.WeaponType.SWORD);
         add(Layer.Player, player);
