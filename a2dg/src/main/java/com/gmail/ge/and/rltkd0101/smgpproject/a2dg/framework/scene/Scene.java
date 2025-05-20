@@ -140,27 +140,39 @@ public class Scene {
         if (this.clipsRect()) {
             canvas.clipRect(0, 0, Metrics.width, Metrics.height);
         }
+
+        // 실제 게임 오브젝트 그리기
         for (ArrayList<IGameObject> gameObjects : layers) {
             for (IGameObject gobj : gameObjects) {
                 gobj.draw(canvas);
             }
         }
+
+        // 디버그 히트박스 그리기
         if (GameView.drawsDebugStuffs) {
             if (bboxPaint == null) {
                 bboxPaint = new Paint();
                 bboxPaint.setStyle(Paint.Style.STROKE);
                 bboxPaint.setColor(Color.RED);
             }
+
             for (ArrayList<IGameObject> gameObjects : layers) {
                 for (IGameObject gobj : gameObjects) {
                     if (gobj instanceof IBoxCollidable) {
-                        RectF rect = ((IBoxCollidable) gobj).getCollisionRect();
-                        canvas.drawRect(rect, bboxPaint);
+                        RectF worldRect = ((IBoxCollidable) gobj).getCollisionRect();
+                        RectF screenRect = new RectF(
+                                worldRect.left - GameView.offsetX,
+                                worldRect.top - GameView.offsetY,
+                                worldRect.right - GameView.offsetX,
+                                worldRect.bottom - GameView.offsetY
+                        );
+                        canvas.drawRect(screenRect, bboxPaint);
                     }
                 }
             }
         }
     }
+
     protected static Paint bboxPaint;
 
     //////////////////////////////////////////////////
