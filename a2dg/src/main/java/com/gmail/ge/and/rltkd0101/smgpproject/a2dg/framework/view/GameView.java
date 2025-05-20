@@ -26,6 +26,9 @@ public class GameView extends View implements Choreographer.FrameCallback {
     public static GameView view;
     public static boolean drawsDebugStuffs = false;
 
+    public static float offsetX = 0;
+    public static float offsetY = 0;
+
     public interface OnEmptyStackListener {
         public void onEmptyStack();
     }
