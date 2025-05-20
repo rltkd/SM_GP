@@ -79,10 +79,13 @@ public class Sprite implements IGameObject {
 
     @Override
     public void draw(Canvas canvas) {
+        if (bitmap == null) return;
+
         dstRect.offset(-GameView.offsetX, -GameView.offsetY);
         canvas.drawBitmap(bitmap, srcRect, dstRect, null);
-        dstRect.offset(GameView.offsetX, GameView.offsetY); // 원상 복구
+        dstRect.offset(GameView.offsetX, GameView.offsetY); // 원상복구
     }
+
 
     @NonNull
     @Override

@@ -23,7 +23,7 @@ public class Player extends AnimSprite {
     public Player(WeaponType weaponType) {
         super(R.mipmap.sword_attack_sheet, 8f, 3); // 3프레임, 초당 8fps
         this.weaponType = weaponType;
-        setPosition(800f, 450f, 150f, 150f);
+        setPosition(1500f, 1000f, 150f, 150f);
     }
 
     @Override
@@ -31,6 +31,14 @@ public class Player extends AnimSprite {
         float distance = speed * GameView.frameTime;
         x += dx * distance;
         y += dy * distance;
+
+        // 🔒 이동 경계 제한 (스프라이트 크기 고려)
+        float halfW = width / 2f;
+        float halfH = height / 2f;
+
+        x = Math.max(halfW, Math.min(x, 3000f - halfW));
+        y = Math.max(halfH, Math.min(y, 2000f - halfH));
+
         setPosition(x, y, width, height);
     }
 
@@ -41,15 +49,21 @@ public class Player extends AnimSprite {
         int frameIndex = Math.round(time * fps) % frameCount;
         srcRect.set(frameIndex * frameWidth, 0, (frameIndex + 1) * frameWidth, frameHeight);
 
+        dstRect.offset(-GameView.offsetX, -GameView.offsetY); // ✅ 카메라 오프셋 적용
+
         if (facingLeft) {
             canvas.save();
-            canvas.scale(-1, 1, x, y);
+            // 중심 기준으로 반전할 때도 offset이 적용된 중심 좌표를 사용해야 함
+            canvas.scale(-1, 1, x - GameView.offsetX, y - GameView.offsetY);
             canvas.drawBitmap(bitmap, srcRect, dstRect, null);
             canvas.restore();
         } else {
-            super.draw(canvas); // 오른쪽은 AnimSprite 기본 처리
+            canvas.drawBitmap(bitmap, srcRect, dstRect, null);
         }
+
+        dstRect.offset(GameView.offsetX, GameView.offsetY); // ✅ 원상 복구
     }
+
 
     public void setDirection(float dx, float dy) {
         float len = (float) Math.sqrt(dx * dx + dy * dy);
