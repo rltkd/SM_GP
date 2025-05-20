@@ -1,15 +1,14 @@
 package com.gmail.ge.and.rltkd0101.smgpproject.app;
 
 import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.graphics.RectF;
-import android.util.Log;
 
 import com.gmail.ge.and.rltkd0101.smgpproject.R;
+import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.interfaces.IBoxCollidable;
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.objects.AnimSprite;
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.view.GameView;
 
-public class Player extends AnimSprite {
+public class Player extends AnimSprite implements IBoxCollidable {
     public enum WeaponType {
         SWORD,
         HANDGUN
@@ -19,6 +18,8 @@ public class Player extends AnimSprite {
     private float speed = 300f;
     private boolean facingLeft = false;
     private WeaponType weaponType;
+
+    private int hp = 100;
 
     public Player(WeaponType weaponType) {
         super(R.mipmap.sword_attack_sheet, 8f, 3); // 3프레임, 초당 8fps
@@ -32,10 +33,9 @@ public class Player extends AnimSprite {
         x += dx * distance;
         y += dy * distance;
 
-        // 🔒 이동 경계 제한 (스프라이트 크기 고려)
+        // 이동 경계 제한
         float halfW = width / 2f;
         float halfH = height / 2f;
-
         x = Math.max(halfW, Math.min(x, 3000f - halfW));
         y = Math.max(halfH, Math.min(y, 2000f - halfH));
 
@@ -49,11 +49,10 @@ public class Player extends AnimSprite {
         int frameIndex = Math.round(time * fps) % frameCount;
         srcRect.set(frameIndex * frameWidth, 0, (frameIndex + 1) * frameWidth, frameHeight);
 
-        dstRect.offset(-GameView.offsetX, -GameView.offsetY); // ✅ 카메라 오프셋 적용
+        dstRect.offset(-GameView.offsetX, -GameView.offsetY);
 
         if (facingLeft) {
             canvas.save();
-            // 중심 기준으로 반전할 때도 offset이 적용된 중심 좌표를 사용해야 함
             canvas.scale(-1, 1, x - GameView.offsetX, y - GameView.offsetY);
             canvas.drawBitmap(bitmap, srcRect, dstRect, null);
             canvas.restore();
@@ -61,9 +60,8 @@ public class Player extends AnimSprite {
             canvas.drawBitmap(bitmap, srcRect, dstRect, null);
         }
 
-        dstRect.offset(GameView.offsetX, GameView.offsetY); // ✅ 원상 복구
+        dstRect.offset(GameView.offsetX, GameView.offsetY);
     }
-
 
     public void setDirection(float dx, float dy) {
         float len = (float) Math.sqrt(dx * dx + dy * dy);
@@ -88,11 +86,10 @@ public class Player extends AnimSprite {
         return y;
     }
 
-    // 공격 범위: 방향에 따라 위치 바뀌는 박스
+    // 공격 범위: 방향 기준 앞쪽 사각형
     public RectF getAttackBox() {
-        float w = 60f; // 공격 범위 너비 (업그레이드 시 증가 가능)
-        float h = 40f; // 공격 범위 높이
-
+        float w = 60f;
+        float h = 40f;
         if (facingLeft) {
             return new RectF(
                     x - width / 2 - w, y - h / 2,
@@ -106,13 +103,27 @@ public class Player extends AnimSprite {
         }
     }
 
-    // 피격 범위: 몸 전체 감싸는 박스
+    // 피격 범위: 몸 전체
     public RectF getHitBox() {
         return new RectF(
                 x - width / 2, y - height / 2,
                 x + width / 2, y + height / 2
         );
     }
+
+    // 충돌 시스템 통합용
+    @Override
+    public RectF getCollisionRect() {
+        return getHitBox();
+    }
+
+    public void takeDamage() {
+        hp--;
+        System.out.println("Player hit! HP: " + hp);
+
+        if (hp <= 0) {
+            System.out.println("Player died!");
+            // TODO: 게임 오버 처리 (씬 변경, 재시작 등)
+        }
+    }
 }
-
-

@@ -1,39 +1,39 @@
 package com.gmail.ge.and.rltkd0101.smgpproject.app;
 
-import android.graphics.RectF;
-
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.interfaces.IGameObject;
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.scene.Scene;
+import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.util.CollisionHelper;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CollisionManager {
+
     public static void handlePlayerAttack(Scene scene, Player player) {
-        RectF attackBox = player.getAttackBox();
-
-        List<IGameObject> enemies = scene.objectsAt(MainScene.Layer.enemy);
-
-        for (IGameObject obj : enemies) {
-            if (!(obj instanceof Enemy)) continue;
-            Enemy enemy = (Enemy) obj;
-
-            if (enemy.checkHit(attackBox)) {
+        for (Enemy enemy : getActiveEnemies(scene)) {
+            if (CollisionHelper.collides(enemy.getCollisionRect(), player.getAttackBox())) {
                 enemy.hit();
             }
         }
     }
 
     public static void handleEnemyCollision(Scene scene, Player player) {
-        RectF playerHitBox = player.getHitBox();
-
-        List<IGameObject> enemies = scene.objectsAt(MainScene.Layer.enemy);
-        for (IGameObject obj : enemies) {
-            if (!(obj instanceof Enemy)) continue;
-            Enemy enemy = (Enemy) obj;
-
-            if (RectF.intersects(enemy.getHitBox(), playerHitBox)) {
-                player.takeDamage(); // TODO: implement damage system
+        for (Enemy enemy : getActiveEnemies(scene)) {
+            if (CollisionHelper.collides(enemy, player)) {
+                player.takeDamage();
             }
         }
+    }
+
+    private static List<IGameObject> getEnemyObjects(Scene scene) {
+        return scene.objectsAt(MainScene.Layer.enemy);
+    }
+
+    private static List<Enemy> getActiveEnemies(Scene scene) {
+        return getEnemyObjects(scene).stream()
+                .filter(obj -> obj instanceof Enemy)
+                .map(obj -> (Enemy) obj)
+                .filter(Enemy::isActive)
+                .collect(Collectors.toList()); // ✅ Android 호환 방식
     }
 }

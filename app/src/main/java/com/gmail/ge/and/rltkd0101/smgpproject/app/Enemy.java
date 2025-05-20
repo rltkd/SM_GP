@@ -1,17 +1,17 @@
 package com.gmail.ge.and.rltkd0101.smgpproject.app;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.RectF;
 
 import com.gmail.ge.and.rltkd0101.smgpproject.R;
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.interfaces.IGameObject;
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.interfaces.IRecyclable;
+import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.interfaces.IBoxCollidable;
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.objects.Sprite;
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.view.GameView;
+import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.scene.Scene;
 
-public class Enemy extends Sprite implements IRecyclable {
+public class Enemy extends Sprite implements IRecyclable, IBoxCollidable {
     public enum EnemyType {
         SLIME, ZOMBIE, GHOST
     }
@@ -20,9 +20,10 @@ public class Enemy extends Sprite implements IRecyclable {
     private float speed;
     private Player target;
     private EnemyType type;
+    private int hp;
 
     public Enemy() {
-        super(R.mipmap.slime); // 기본값은 SLIME
+        super(R.mipmap.slime); // 기본값: SLIME
     }
 
     public void revive(float x, float y, Player target, EnemyType type) {
@@ -34,16 +35,20 @@ public class Enemy extends Sprite implements IRecyclable {
             case SLIME:
                 setImageResourceId(R.mipmap.slime);
                 this.speed = 100f;
+                this.hp = 10;
                 break;
-      /*      case ZOMBIE:
+/*            case ZOMBIE:
                 setImageResourceId(R.mipmap.zombie);
                 this.speed = 60f;
+                this.hp = 3;
                 break;
             case GHOST:
                 setImageResourceId(R.mipmap.ghost);
                 this.speed = 140f;
-                break;
-       */ }
+                this.hp = 2;
+                break;*/
+        }
+
         setPosition(x, y, 64, 64);
     }
 
@@ -51,6 +56,7 @@ public class Enemy extends Sprite implements IRecyclable {
     public void onRecycle() {
         this.active = false;
         this.target = null;
+        this.hp = 0;
     }
 
     @Override
@@ -96,4 +102,15 @@ public class Enemy extends Sprite implements IRecyclable {
         );
     }
 
+    @Override
+    public RectF getCollisionRect() {
+        return getHitBox();
+    }
+
+    public void hit() {
+        hp--;
+        if (hp <= 0) {
+            Scene.top().remove(MainScene.Layer.enemy, this); // ♻️ 제거 및 재활용
+        }
+    }
 }
