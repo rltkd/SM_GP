@@ -20,7 +20,7 @@ class MainScene extends Scene {
                1500f,1000f,
                 3000f,2000f
         )); 
-        player = new Player(Player.WeaponType.SWORD);
+        player = new Player(new SwordWeapon());
         add(Layer.Player, player);
         hpBar = new HpBar(player);
         add(Layer.UI,hpBar);

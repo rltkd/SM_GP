@@ -6,45 +6,27 @@ import android.graphics.RectF;
 import com.gmail.ge.and.rltkd0101.smgpproject.R;
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.interfaces.IBoxCollidable;
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.objects.AnimSprite;
+import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.scene.Scene;
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.view.GameView;
+import com.gmail.ge.and.rltkd0101.smgpproject.app.Weapon;
 
 public class Player extends AnimSprite implements IBoxCollidable {
     private float hp = 100f;
     private static final float MAX_HP = 100f;
     private float damage = 3f;
 
-    public float getHpRatio() {
-        return hp / MAX_HP;
-    }
-
-    public int getHp() {
-        return (int) hp;
-    }
-
-    public float getHpRaw() {
-        return hp;
-    }
-
-    public float getMaxHp() {
-        return MAX_HP;
-    }
-
-    public enum WeaponType {
-        SWORD,
-        HANDGUN
-    }
-
     private float dx = 0, dy = 0;
     private boolean facingLeft = false;
-    private final WeaponType weaponType;
 
     private float damageTimer = 0f;
     private int damageThisSecond = 0;
     private static final int MAX_DAMAGE_PER_SECOND = 6;
 
-    public Player(WeaponType weaponType) {
+    private Weapon weapon;
+
+    public Player(Weapon weapon) {
         super(R.mipmap.sword_attack_sheet, 8f, 3);
-        this.weaponType = weaponType;
+        this.weapon = weapon;
         setPosition(1500f, 1000f, 150f, 150f);
     }
 
@@ -110,10 +92,6 @@ public class Player extends AnimSprite implements IBoxCollidable {
         }
     }
 
-    public WeaponType getWeaponType() {
-        return weaponType;
-    }
-
     public float getX() {
         return x;
     }
@@ -122,26 +100,24 @@ public class Player extends AnimSprite implements IBoxCollidable {
         return y;
     }
 
-    public RectF getAttackBox() {
-        if (weaponType == WeaponType.HANDGUN) {
-            return new RectF(0, 0, 0, 0);
-        }
+    public float getWidth() {
+        return width;
+    }
 
-        float w = 90f;
-        float h = 40f;
-        float overlap = 30f;
+    public float getHeight() {
+        return height;
+    }
 
-        if (facingLeft) {
-            return new RectF(
-                    x - width / 2 - w + overlap, y - h / 2,
-                    x - width / 2 + overlap, y + h / 2
-            );
-        } else {
-            return new RectF(
-                    x + width / 2 - overlap, y - h / 2,
-                    x + width / 2 + w - overlap, y + h / 2
-            );
-        }
+    public boolean isFacingLeft() {
+        return facingLeft;
+    }
+
+    public float getDamage() {
+        return damage;
+    }
+
+    public void setDamage(float damage) {
+        this.damage = damage;
     }
 
     public RectF getHitBox() {
@@ -160,12 +136,15 @@ public class Player extends AnimSprite implements IBoxCollidable {
         return getHitBox();
     }
 
+    public RectF getAttackBox() {
+        return weapon != null ? weapon.getAttackBox(this) : new RectF(0, 0, 0, 0);
+    }
+
     public void takeDamage(float damage) {
         if (damageThisSecond + damage > MAX_DAMAGE_PER_SECOND) return;
 
         hp -= damage;
         damageThisSecond += (int) damage;
-
         if (hp < 0f) hp = 0f;
 
         System.out.println("Player hit! HP: " + (int) hp);
@@ -176,17 +155,27 @@ public class Player extends AnimSprite implements IBoxCollidable {
         }
     }
 
+    public void attack(Scene scene) {
+        if (weapon != null) {
+            weapon.attack(this, scene);
+        }
+    }
+
+    public void setWeapon(Weapon weapon) {
+        this.weapon = weapon;
+    }
+
+    public float getHpRatio() {
+        return hp / MAX_HP;
+    }
+
+    public int getHp() {
+        return (int) hp;
+    }
+
     public void reset() {
-        hp = getMaxHp();
+        hp = MAX_HP;
         damageTimer = 0f;
         damageThisSecond = 0;
-    }
-
-    public float getDamage() {
-        return damage;
-    }
-
-    public void setDamage(float damage) {
-        this.damage = damage;
     }
 }
