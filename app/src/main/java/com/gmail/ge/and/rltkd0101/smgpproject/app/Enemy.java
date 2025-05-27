@@ -37,7 +37,7 @@ public class Enemy extends Sprite implements IRecyclable, IBoxCollidable {
         switch (type) {
             case SLIME:
                 setImageResourceId(R.mipmap.slime);
-                this.speed = 100f;
+                this.speed = 80f;
                 this.hp = 10;
                 break;
          /*   case ZOMBIE:
@@ -47,7 +47,7 @@ public class Enemy extends Sprite implements IRecyclable, IBoxCollidable {
                 break;
             case GHOST:
                 setImageResourceId(R.mipmap.ghost);
-                this.speed = 140f;
+                this.speed = 100f;
                 this.hp = 5;
                 break;*/
         }

@@ -97,7 +97,7 @@ public class Bullet implements IGameObject, IRecyclable {
     }
 
     public void deactivate() {
-        onRecycle(); // 호출로 명확하게 처리
+        Scene.top().remove(MainScene.Layer.bullet, this); // ✅ remove 호출
     }
 
     public RectF getCollisionRect() {
