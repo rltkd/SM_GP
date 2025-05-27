@@ -8,7 +8,7 @@ class MainScene extends Scene {
     private Player player;
     private HpBar hpBar;
     public enum Layer {
-        bg, Player,UI, enemy;
+        bg, Player,UI, enemy,bullet;
         public static final int COUNT = values().length;
     }
 
