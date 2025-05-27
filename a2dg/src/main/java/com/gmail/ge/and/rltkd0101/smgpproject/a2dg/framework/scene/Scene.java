@@ -132,10 +132,17 @@ public class Scene {
             int count = gameObjects.size();
             for (int i = count - 1; i >= 0; i--) {
                 IGameObject gobj = gameObjects.get(i);
+
+                if (gobj instanceof IRecyclable) {
+                    IRecyclable r = (IRecyclable) gobj;
+                    if (!r.isActive()) continue; // 🔴 비활성화된 객체는 update 생략
+                }
+
                 gobj.update();
             }
         }
     }
+
     public void draw(Canvas canvas) {
         if (this.clipsRect()) {
             canvas.clipRect(0, 0, Metrics.width, Metrics.height);
