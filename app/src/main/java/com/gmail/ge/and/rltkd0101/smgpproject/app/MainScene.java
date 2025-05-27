@@ -39,14 +39,6 @@ public class MainScene extends Scene {
         // 몬스터 스폰
         add(Layer.enemy, new EnemySpawner(player));
     }
-
-    // 무기 바꾸기 (선택적 사용 가능)
-    public void setWeapon(Weapon weapon) {
-        if (player != null) {
-            player.setWeapon(weapon);
-        }
-    }
-
     @Override
     public void update() {
         super.update();
