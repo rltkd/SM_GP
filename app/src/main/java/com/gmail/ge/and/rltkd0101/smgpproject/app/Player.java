@@ -143,4 +143,8 @@ public class Player extends AnimSprite implements IBoxCollidable {
         damageTimer = 0f;
         damageThisSecond = 0;
     }
+
+    public RectF getAttackBox() {
+        return weapon != null ? weapon.getAttackBox(this) : new RectF(0, 0, 0, 0);
+    }
 }

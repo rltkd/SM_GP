@@ -136,6 +136,8 @@ public class Enemy extends Sprite implements IRecyclable, IBoxCollidable {
 
         if (hp <= 0) {
             Scene.top().remove(MainScene.Layer.enemy, this);
+            Scene.top().collectRecyclable(this); // 재활용 통에 수동 수집
+
         }
     }
 
