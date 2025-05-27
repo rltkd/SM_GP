@@ -25,7 +25,7 @@ public class Player extends AnimSprite implements IBoxCollidable {
     private Weapon weapon;
 
     public Player(Weapon weapon) {
-        super(R.mipmap.sword_attack_sheet, 8f, 3);
+        super(R.mipmap.handgun_attack_sheet, 8f, 2);
         this.weapon = weapon;
         setPosition(1500f, 1000f, 150f, 150f);
     }

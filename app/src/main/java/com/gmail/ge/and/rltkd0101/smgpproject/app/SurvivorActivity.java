@@ -11,9 +11,25 @@ public class SurvivorActivity extends GameActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // 디버그용 디버깅 정보 출력 여부
         GameView.drawsDebugStuffs = BuildConfig.DEBUG;
+
+        // 게임 해상도 설정
         Metrics.setGameSize(1600, 900);
+
         super.onCreate(savedInstanceState);
-        new MainScene().push();
+
+        // 무기 타입 인텐트에서 받아오기
+        String weaponType = getIntent().getStringExtra(WeaponSelectActivity.EXTRA_WEAPON_TYPE);
+        Weapon weapon;
+
+        if ("gun".equals(weaponType)) {
+            weapon = new HandgunWeapon();
+        } else {
+            weapon = new SwordWeapon();
+        }
+
+        // 선택한 무기를 MainScene에 넘겨서 게임 시작
+        new MainScene(weapon).push();
     }
 }

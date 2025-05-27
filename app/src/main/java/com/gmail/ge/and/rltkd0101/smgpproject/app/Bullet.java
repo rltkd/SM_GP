@@ -63,6 +63,16 @@ public class Bullet implements IGameObject, IRecyclable {
         }
     }
 
+    public void init(float x, float y, float dx, float dy, float damage) {
+        this.x = x;
+        this.y = y;
+        this.dx = dx;
+        this.dy = dy;
+        this.damage = damage;
+        this.active = true;     // ❗반드시 재활성화
+        this.distanceTraveled = 0f;
+    }
+
     @Override
     public void draw(Canvas canvas) {
         if (!active) return;
