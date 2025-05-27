@@ -4,6 +4,7 @@ import android.graphics.RectF;
 import android.util.Log;
 
 import com.gmail.ge.and.rltkd0101.smgpproject.R;
+import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.interfaces.IGameObject;
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.scene.Scene;
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.view.GameView;
 
