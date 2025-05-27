@@ -26,8 +26,9 @@ public class SurvivorActivity extends GameActivity {
         if ("gun".equals(weaponType)) {
             weapon = new HandgunWeapon();
         } else {
-            weapon = new SwordWeapon();
+            weapon = new SwordWeapon(); // 기본 무기
         }
+
 
         // 선택한 무기를 MainScene에 넘겨서 게임 시작
         new MainScene(weapon).push();

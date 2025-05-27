@@ -17,8 +17,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if (BuildConfig.DEBUG) {
-            startActivity(new Intent(this, WeaponSelectActivity.class)); // ✅ 변경
+            Intent intent = new Intent(this, WeaponSelectActivity.class); // ✅ 수정
+            startActivity(intent);
         }
+
     }
 
     public void onBtnStartGame(View view) {
