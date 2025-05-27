@@ -3,6 +3,7 @@ package com.gmail.ge.and.rltkd0101.smgpproject.app;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.util.Log;
 
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.interfaces.IGameObject;
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.interfaces.IRecyclable;
@@ -75,11 +76,15 @@ public class Bullet implements IGameObject, IRecyclable {
 
     @Override
     public void draw(Canvas canvas) {
-        if (!active) return;
+        if (!active) {
+            Log.d("Bullet", "draw() skipped: not active");
+            return;
+        }
 
         Paint paint = new Paint();
         paint.setColor(0xFFFFFF00); // 노란색
         canvas.drawCircle(x - GameView.offsetX, y - GameView.offsetY, radius, paint);
+        Log.d("Bullet", "draw(): x=" + x + ", y=" + y);
     }
 
     @Override
