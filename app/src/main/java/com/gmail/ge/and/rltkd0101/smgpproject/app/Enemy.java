@@ -15,11 +15,20 @@ public class Enemy extends Sprite implements IRecyclable, IBoxCollidable {
         SLIME, ZOMBIE, GHOST
     }
 
+    private float scale = 1.0f;
+    private final float baseWidth = 64f;
+    private final float baseHeight = 64f;
+
+    public void setScale(float scale) {
+        this.scale = scale;
+        setPosition(x, y, baseWidth * scale, baseHeight * scale);
+    }
+
     private boolean active = true;
     private float speed;
     private Player target;
     private EnemyType type;
-    private int hp;
+    private float hp;
 
     // 피격 쿨타임 + 넉백 관련
     private float hitCooldown = 0f;
@@ -40,22 +49,25 @@ public class Enemy extends Sprite implements IRecyclable, IBoxCollidable {
         switch (type) {
             case SLIME:
                 setImageResourceId(R.mipmap.slime);
-                this.speed = 80f;
-                this.hp = 10;
+                this.speed = 60f;
+                this.hp = 2f;
+                setScale(1.0f);
                 break;
             case ZOMBIE:
                 setImageResourceId(R.mipmap.zombie);
                 this.speed = 30f;
-                this.hp = 20;
+                this.hp = 4f;
+                setScale(2.0f);
                 break;
             case GHOST:
                 setImageResourceId(R.mipmap.ghost);
                 this.speed = 100f;
-                this.hp = 5;
+                this.hp = 0.5f;
+                setScale(0.6f);
                 break;
         }
 
-        setPosition(x, y, 64, 64);
+ /*       setPosition(x, y, 64, 64);*/
     }
 
     public static boolean canSpawnZombie() {
@@ -67,12 +79,17 @@ public class Enemy extends Sprite implements IRecyclable, IBoxCollidable {
         return false;
     }
 
+
     @Override
     public void onRecycle() {
         this.active = false;
         this.target = null;
         this.hp = 0;
+        this.speed = 0f;
+        this.scale = 1.0f;
+        this.type = null;
     }
+
 
     @Override
     public void update() {

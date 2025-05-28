@@ -36,7 +36,7 @@ public class Joystick implements IGameObject, ITouchable {
         if (!isPressed) {
             actuator.set(0f, 0f);
         }
-        player.setDirection(actuator.x, actuator.y);
+        player.setActuator(actuator.x, actuator.y);
     }
 
     @Override

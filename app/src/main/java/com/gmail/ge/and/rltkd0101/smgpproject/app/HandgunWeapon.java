@@ -4,23 +4,16 @@ import android.graphics.RectF;
 import android.util.Log;
 
 import com.gmail.ge.and.rltkd0101.smgpproject.R;
-import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.interfaces.IGameObject;
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.scene.Scene;
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.view.GameView;
 
 public class HandgunWeapon implements Weapon {
-    private static final float COOLDOWN = 0.3f;
-    private static final float BASE_DAMAGE = 2.0f;
+    private static final float COOLDOWN = 0.4f;
+    private static final float BASE_DAMAGE = 0.5f;
     private static final int FRAME_COUNT = 2;
-    private float timeSinceLastShot = 0f;
 
     @Override
     public void attack(Player player, Scene scene) {
-        timeSinceLastShot += GameView.frameTime;
-        if (timeSinceLastShot < COOLDOWN) return;
-
-        timeSinceLastShot = 0f;
-
         float x = player.getX();
         float y = player.getY();
         float dx = player.isFacingLeft() ? -1f : 1f;
@@ -28,13 +21,12 @@ public class HandgunWeapon implements Weapon {
 
         Bullet bullet = Scene.top().getRecyclable(Bullet.class);
         if (bullet == null) {
-            bullet = new Bullet(x, y, dx, dy, player.getDamage()); // 새로 생성
+            bullet = new Bullet(x, y, dx, dy, player.getDamage());
         } else {
-            bullet.init(x, y, dx, dy, player.getDamage());         // 재사용 초기화
+            bullet.init(x, y, dx, dy, player.getDamage());
         }
-        Log.d("Weapon", "Trying to add Bullet");
+
         scene.add(MainScene.Layer.bullet, bullet);
-        Log.d("Weapon", "Bullet added");
     }
 
     @Override

@@ -21,8 +21,24 @@ public class Player extends AnimSprite implements IBoxCollidable {
 
     private final Weapon weapon;
 
+    private float attackCooldown = 0f;
+    private float animationTimer = 0f;
+    private boolean isAttacking = false;
+    private int currentFrame = 0;
+
+    private float actuatorX = 0f;
+    private float actuatorY = 0f;
+
+    public void setActuator(float ax, float ay) {
+        this.actuatorX = ax;
+        this.actuatorY = ay;
+        if (Math.abs(ax) > 0.01f) {
+            this.facingLeft = ax < 0;
+        }
+    }
+
     public Player(Weapon weapon) {
-        super(weapon.getSpriteResId(), 3f, weapon.getFrameCount());
+        super(weapon.getSpriteResId(), 0f, weapon.getFrameCount()); // fps 무시
         this.weapon = weapon;
         setPosition(1500f, 1000f, 150f, 150f);
     }
@@ -32,17 +48,51 @@ public class Player extends AnimSprite implements IBoxCollidable {
         updateMovement();
         clampPosition();
         updateDamageCooldown();
+        updateAttackLogic();
+        updateAnimationFrame();
+    }
 
-        if (weapon != null) {
-            weapon.attack(this, Scene.top());
+    private void updateAttackLogic() {
+        if (weapon == null) return;
+
+        float cooldown = weapon.getCooldown();
+
+        if (attackCooldown > 0f) {
+            attackCooldown -= GameView.frameTime;
+            return;
+        }
+
+        weapon.attack(this, Scene.top());
+        attackCooldown = cooldown;
+
+        isAttacking = true;
+        animationTimer = 0f;
+        currentFrame = 0;
+    }
+
+    private void updateAnimationFrame() {
+        if (!isAttacking || weapon == null) {
+            currentFrame = 0;
+            return;
+        }
+
+        int frameCount = weapon.getFrameCount();
+        float frameDuration = weapon.getCooldown() / frameCount;
+
+        animationTimer += GameView.frameTime;
+        currentFrame = (int)(animationTimer / frameDuration);
+
+        if (currentFrame >= frameCount) {
+            currentFrame = frameCount - 1;
+            isAttacking = false;
         }
     }
 
     private void updateMovement() {
-        float speed = 250f;
+        float speed = 200f;
         float distance = speed * GameView.frameTime;
-        x += dx * distance;
-        y += dy * distance;
+        x += actuatorX * distance;
+        y += actuatorY * distance;
     }
 
     private void clampPosition() {
@@ -63,10 +113,8 @@ public class Player extends AnimSprite implements IBoxCollidable {
 
     @Override
     public void draw(Canvas canvas) {
-        long now = System.currentTimeMillis();
-        float time = (now - createdOn) / 1000.0f;
-        int frameIndex = Math.round(time * fps) % frameCount;
-        srcRect.set(frameIndex * frameWidth, 0, (frameIndex + 1) * frameWidth, frameHeight);
+        int frameWidth = bitmap.getWidth() / frameCount;
+        srcRect.set(currentFrame * frameWidth, 0, (currentFrame + 1) * frameWidth, frameHeight);
 
         dstRect.offset(-GameView.offsetX, -GameView.offsetY);
 

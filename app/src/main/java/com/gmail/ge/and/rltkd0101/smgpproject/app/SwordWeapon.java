@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SwordWeapon implements Weapon {
-    public static final float BASE_DAMAGE = 5.0f;
-    public static final float COOLDOWN = 0.6f;
+    public static final float BASE_DAMAGE = 1.0f;
+    public static final float COOLDOWN = 1.0f;
     public static final int FRAME_COUNT = 3;
 
     @Override
