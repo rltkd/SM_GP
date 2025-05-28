@@ -40,16 +40,16 @@ public class Enemy extends Sprite implements IRecyclable, IBoxCollidable {
                 this.speed = 80f;
                 this.hp = 10;
                 break;
-         /*   case ZOMBIE:
+            case ZOMBIE:
                 setImageResourceId(R.mipmap.zombie);
-                this.speed = 60f;
-                this.hp = 30;
+                this.speed = 30f;
+                this.hp = 20;
                 break;
             case GHOST:
                 setImageResourceId(R.mipmap.ghost);
                 this.speed = 100f;
                 this.hp = 5;
-                break;*/
+                break;
         }
 
         setPosition(x, y, 64, 64);
