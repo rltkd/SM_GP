@@ -7,6 +7,7 @@ import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.interfaces.IGameObj
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.scene.Scene;
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.util.CollisionHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SwordWeapon implements Weapon {
@@ -19,17 +20,16 @@ public class SwordWeapon implements Weapon {
         RectF box = getAttackBox(player);
         if (box == null || box.isEmpty()) return;
 
-        List<IGameObject> enemies = scene.objectsAt(MainScene.Layer.enemy);
+        List<IGameObject> enemies = new ArrayList<>(scene.objectsAt(MainScene.Layer.enemy)); // ✅ 복사본 사용
         for (IGameObject obj : enemies) {
             if (obj instanceof Enemy) {
                 Enemy enemy = (Enemy) obj;
-                if (enemy.isActive()) {
-                    if (CollisionHelper.collides(enemy.getCollisionRect(), box)) {
-                        enemy.hit(player.getDamage());
-                    }
+                if (enemy.isActive() && CollisionHelper.collides(enemy.getCollisionRect(), box)) {
+                    enemy.hit(player.getDamage());
                 }
             }
         }
+
     }
 
     @Override

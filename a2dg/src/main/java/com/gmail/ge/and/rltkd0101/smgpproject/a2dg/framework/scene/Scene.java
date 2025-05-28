@@ -35,7 +35,7 @@ public class Scene {
         ArrayList<IGameObject> gameObjects = layers.get(layerIndex);
         gameObjects.add(gameObject);
 
-        Log.d("Scene", "Added " + gameObject.getClass().getSimpleName() + " to " + layer.name());
+       // Log.d("Scene", "Added " + gameObject.getClass().getSimpleName() + " to " + layer.name());
     }
 
 
@@ -154,7 +154,7 @@ public class Scene {
         // 실제 게임 오브젝트 그리기
         for (ArrayList<IGameObject> gameObjects : layers) {
             for (IGameObject gobj : gameObjects) {
-                Log.d("Scene", "draw object: " + gobj.getClass().getSimpleName());
+                //Log.d("Scene", "draw object: " + gobj.getClass().getSimpleName());
                 gobj.draw(canvas);
             }
         }

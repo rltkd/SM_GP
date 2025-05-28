@@ -9,10 +9,12 @@ import java.util.Random;
 
 public class EnemySpawner implements IGameObject {
     private float timer = 0f;
-    private float spawnInterval = 2.0f; // 2초마다 적 생성
-    private Player player;
+    private final float spawnInterval = 2.0f; // 기본 스폰 간격
+    private float zombieTimer = 0f;
+    private final float zombieSpawnInterval = 15.0f; // 좀비는 15초마다 등장
+
+    private final Player player;
     private final Random random = new Random();
-    private static final Enemy.EnemyType[] TYPES = Enemy.EnemyType.values();
 
     public EnemySpawner(Player player) {
         this.player = player;
@@ -20,25 +22,36 @@ public class EnemySpawner implements IGameObject {
 
     @Override
     public void update() {
-        timer += GameView.frameTime;
+        float frameTime = GameView.frameTime;
+        timer += frameTime;
+        zombieTimer += frameTime;
+
         if (timer >= spawnInterval) {
             timer -= spawnInterval;
 
             float spawnX = random.nextInt((int) Metrics.width);
             float spawnY = random.nextInt((int) Metrics.height);
 
-            // 플레이어 근처에서 스폰되지 않게 최소 거리 제한 (예: 200px)
             float dx = spawnX - player.getX();
             float dy = spawnY - player.getY();
-            float distance = (float)Math.sqrt(dx * dx + dy * dy);
-            if (distance < 200f) return; // 너무 가까우면 스폰 취소
+            float distance = (float) Math.sqrt(dx * dx + dy * dy);
+            if (distance < 200f) return; // 플레이어 근처 스폰 방지
 
             Enemy enemy = Scene.top().getRecyclable(Enemy.class);
             if (enemy == null) {
                 enemy = new Enemy();
             }
 
-            Enemy.EnemyType type = TYPES[random.nextInt(TYPES.length)];
+            // 좀비는 별도 타이머 기준
+            Enemy.EnemyType type;
+            if (zombieTimer >= zombieSpawnInterval) {
+                zombieTimer = 0f;
+                type = Enemy.EnemyType.ZOMBIE;
+            } else {
+                // SLIME 또는 GHOST 랜덤 선택
+                type = random.nextBoolean() ? Enemy.EnemyType.SLIME : Enemy.EnemyType.GHOST;
+            }
+
             enemy.revive(spawnX, spawnY, player, type);
             Scene.top().add(MainScene.Layer.enemy, enemy);
         }
@@ -46,6 +59,6 @@ public class EnemySpawner implements IGameObject {
 
     @Override
     public void draw(android.graphics.Canvas canvas) {
-        // EnemySpawner는 그릴 대상이 아님/컴파일 오류 방지
+        // EnemySpawner는 그릴 요소 없음
     }
 }

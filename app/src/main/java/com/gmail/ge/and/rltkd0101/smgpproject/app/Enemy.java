@@ -25,6 +25,9 @@ public class Enemy extends Sprite implements IRecyclable, IBoxCollidable {
     private float hitCooldown = 0f;
     private static final float HIT_COOLDOWN_TIME = 0.3f;
 
+    private static float zombieSpawnTimer = 0f;
+    private static final float ZOMBIE_SPAWN_INTERVAL = 15.0f;
+
     public Enemy() {
         super(R.mipmap.slime); // 기본 이미지
     }
@@ -53,6 +56,15 @@ public class Enemy extends Sprite implements IRecyclable, IBoxCollidable {
         }
 
         setPosition(x, y, 64, 64);
+    }
+
+    public static boolean canSpawnZombie() {
+        zombieSpawnTimer += GameView.frameTime;
+        if (zombieSpawnTimer >= ZOMBIE_SPAWN_INTERVAL) {
+            zombieSpawnTimer = 0f;
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -137,7 +149,6 @@ public class Enemy extends Sprite implements IRecyclable, IBoxCollidable {
         if (hp <= 0) {
             Scene.top().remove(MainScene.Layer.enemy, this);
             Scene.top().collectRecyclable(this); // 재활용 통에 수동 수집
-
         }
     }
 

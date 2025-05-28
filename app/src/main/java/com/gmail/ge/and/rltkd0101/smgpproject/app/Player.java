@@ -22,7 +22,7 @@ public class Player extends AnimSprite implements IBoxCollidable {
     private final Weapon weapon;
 
     public Player(Weapon weapon) {
-        super(weapon.getSpriteResId(), 8f, weapon.getFrameCount());
+        super(weapon.getSpriteResId(), 3f, weapon.getFrameCount());
         this.weapon = weapon;
         setPosition(1500f, 1000f, 150f, 150f);
     }
