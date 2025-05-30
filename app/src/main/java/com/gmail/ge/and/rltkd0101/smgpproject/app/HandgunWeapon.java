@@ -1,11 +1,8 @@
 package com.gmail.ge.and.rltkd0101.smgpproject.app;
 
 import android.graphics.RectF;
-import android.util.Log;
-
 import com.gmail.ge.and.rltkd0101.smgpproject.R;
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.scene.Scene;
-import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.view.GameView;
 
 public class HandgunWeapon implements Weapon {
     private static final float COOLDOWN = 0.4f;
@@ -14,16 +11,28 @@ public class HandgunWeapon implements Weapon {
 
     @Override
     public void attack(Player player, Scene scene) {
+        float dirX = player.getActuatorX();
+        float dirY = player.getActuatorY();
+
+// 완전한 0이면 lastDirection 사용
+        if (Math.abs(dirX) < 0.001f && Math.abs(dirY) < 0.001f) {
+            dirX = player.getLastDirectionX();
+            dirY = player.getLastDirectionY();
+        }
+
+        // 방향 정규화
+        float length = (float) Math.sqrt(dirX * dirX + dirY * dirY);
+        dirX /= length;
+        dirY /= length;
+
         float x = player.getX();
         float y = player.getY();
-        float dx = player.isFacingLeft() ? -1f : 1f;
-        float dy = 0f;
 
         Bullet bullet = Scene.top().getRecyclable(Bullet.class);
         if (bullet == null) {
-            bullet = new Bullet(x, y, dx, dy, player.getDamage());
+            bullet = new Bullet(x, y, dirX, dirY, player.getDamage());
         } else {
-            bullet.init(x, y, dx, dy, player.getDamage());
+            bullet.init(x, y, dirX, dirY, player.getDamage());
         }
 
         scene.add(MainScene.Layer.bullet, bullet);

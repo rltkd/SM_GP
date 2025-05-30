@@ -12,13 +12,7 @@ public class Player extends AnimSprite implements IBoxCollidable {
     private float hp = 100f;
     private static final float MAX_HP = 100f;
 
-    private float dx = 0, dy = 0;
     private boolean facingLeft = false;
-
-    private float damageTimer = 0f;
-    private int damageThisSecond = 0;
-    private static final int MAX_DAMAGE_PER_SECOND = 6;
-
     private final Weapon weapon;
 
     private float attackCooldown = 0f;
@@ -26,19 +20,19 @@ public class Player extends AnimSprite implements IBoxCollidable {
     private boolean isAttacking = false;
     private int currentFrame = 0;
 
-    private float actuatorX = 0f;
+    private float actuatorX = 1f; // 기본 방향 오른쪽
     private float actuatorY = 0f;
 
-    public void setActuator(float ax, float ay) {
-        this.actuatorX = ax;
-        this.actuatorY = ay;
-        if (Math.abs(ax) > 0.01f) {
-            this.facingLeft = ax < 0;
-        }
-    }
+    private float damageTimer = 0f;
+    private int damageThisSecond = 0;
+    private static final int MAX_DAMAGE_PER_SECOND = 6;
+
+    private float lastDirectionX = 1f; // 기본 오른쪽
+    private float lastDirectionY = 0f;
+
 
     public Player(Weapon weapon) {
-        super(weapon.getSpriteResId(), 0f, weapon.getFrameCount()); // fps 무시
+        super(weapon.getSpriteResId(), 0f, weapon.getFrameCount());
         this.weapon = weapon;
         setPosition(1500f, 1000f, 150f, 150f);
     }
@@ -52,10 +46,33 @@ public class Player extends AnimSprite implements IBoxCollidable {
         updateAnimationFrame();
     }
 
+    public void setActuator(float ax, float ay) {
+        this.actuatorX = ax;
+        this.actuatorY = ay;
+
+        // 새 입력이 유효한 경우에만 방향 갱신
+        if (Math.abs(ax) > 0.01f || Math.abs(ay) > 0.01f) {
+            lastDirectionX = ax;
+            lastDirectionY = ay;
+            if (Math.abs(ax) > 0.01f) {
+                this.facingLeft = ax < 0;
+            }
+        }
+    }
+
+
+    public float getActuatorX() { return actuatorX; }
+    public float getActuatorY() { return actuatorY; }
+
+    private void updateMovement() {
+        float speed = 200f;
+        float distance = speed * GameView.frameTime;
+        x += actuatorX * distance;
+        y += actuatorY * distance;
+    }
+
     private void updateAttackLogic() {
         if (weapon == null) return;
-
-        float cooldown = weapon.getCooldown();
 
         if (attackCooldown > 0f) {
             attackCooldown -= GameView.frameTime;
@@ -63,7 +80,7 @@ public class Player extends AnimSprite implements IBoxCollidable {
         }
 
         weapon.attack(this, Scene.top());
-        attackCooldown = cooldown;
+        attackCooldown = weapon.getCooldown();
 
         isAttacking = true;
         animationTimer = 0f;
@@ -86,13 +103,6 @@ public class Player extends AnimSprite implements IBoxCollidable {
             currentFrame = frameCount - 1;
             isAttacking = false;
         }
-    }
-
-    private void updateMovement() {
-        float speed = 200f;
-        float distance = speed * GameView.frameTime;
-        x += actuatorX * distance;
-        y += actuatorY * distance;
     }
 
     private void clampPosition() {
@@ -128,17 +138,6 @@ public class Player extends AnimSprite implements IBoxCollidable {
         }
 
         dstRect.offset(GameView.offsetX, GameView.offsetY);
-    }
-
-    public void setDirection(float dx, float dy) {
-        float len = (float) Math.sqrt(dx * dx + dy * dy);
-        if (len > 0) {
-            this.dx = dx / len;
-            this.dy = dy / len;
-            this.facingLeft = dx < 0;
-        } else {
-            this.dx = this.dy = 0;
-        }
     }
 
     public float getX() { return x; }
@@ -194,5 +193,13 @@ public class Player extends AnimSprite implements IBoxCollidable {
 
     public RectF getAttackBox() {
         return weapon != null ? weapon.getAttackBox(this) : new RectF(0, 0, 0, 0);
+    }
+
+    public float getLastDirectionX() {
+        return lastDirectionX;
+    }
+
+    public float getLastDirectionY() {
+        return lastDirectionY;
     }
 }

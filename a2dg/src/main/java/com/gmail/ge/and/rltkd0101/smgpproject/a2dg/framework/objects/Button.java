@@ -1,6 +1,5 @@
 package com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.objects;
 
-import android.util.Log;
 import android.view.MotionEvent;
 
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.interfaces.ITouchable;
@@ -20,7 +19,7 @@ public class Button extends Sprite implements ITouchable {
     @Override
     public boolean onTouchEvent(MotionEvent e) {
         int action = e.getAction();
-        Log.d(TAG, "onTouch:" + this + " action=" + action);
+       // Log.d(TAG, "onTouch:" + this + " action=" + action);
         if (action == MotionEvent.ACTION_DOWN) {
             float[] pts = Metrics.fromScreen(e.getX(), e.getY());
             float x = pts[0], y = pts[1];
