@@ -62,7 +62,7 @@ public class Enemy extends Sprite implements IRecyclable, IBoxCollidable {
             case GHOST:
                 setImageResourceId(R.mipmap.ghost);
                 this.speed = 100f;
-                this.hp = 0.5f;
+                this.hp = 1f;
                 setScale(0.6f);
                 break;
         }
@@ -177,7 +177,7 @@ public class Enemy extends Sprite implements IRecyclable, IBoxCollidable {
         float dist = (float) Math.sqrt(dx * dx + dy * dy);
 
         if (dist > 0.001f) {
-            float knockback = 30f; // 넉백 거리
+            float knockback = 40f; // 넉백 거리
             dx = (dx / dist) * knockback;
             dy = (dy / dist) * knockback;
 

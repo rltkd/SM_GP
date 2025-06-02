@@ -5,7 +5,7 @@ import com.gmail.ge.and.rltkd0101.smgpproject.R;
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.scene.Scene;
 
 public class HandgunWeapon implements Weapon {
-    private static final float COOLDOWN = 0.4f;
+    private static final float COOLDOWN = 0.5f;
     private static final float BASE_DAMAGE = 0.5f;
     private static final int FRAME_COUNT = 2;
 

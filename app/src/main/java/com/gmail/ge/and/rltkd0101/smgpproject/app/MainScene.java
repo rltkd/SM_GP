@@ -5,8 +5,7 @@ import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.objects.Sprite;
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.scene.Scene;
 
 public class MainScene extends Scene {
-    private Player player;
-    private HpBar hpBar;
+    private final Player player;
 
     public enum Layer {
         bg, Player, UI, enemy, bullet;
@@ -29,7 +28,7 @@ public class MainScene extends Scene {
         add(Layer.Player, player);
 
         // HP 바
-        hpBar = new HpBar(player);
+        HpBar hpBar = new HpBar(player);
         add(Layer.UI, hpBar);
 
         // 조이스틱

@@ -65,7 +65,7 @@ public class Player extends AnimSprite implements IBoxCollidable {
     public float getActuatorY() { return actuatorY; }
 
     private void updateMovement() {
-        float speed = 200f;
+        float speed = 250f;
         float distance = speed * GameView.frameTime;
         x += actuatorX * distance;
         y += actuatorY * distance;
@@ -142,8 +142,7 @@ public class Player extends AnimSprite implements IBoxCollidable {
 
     public float getX() { return x; }
     public float getY() { return y; }
-    public float getWidth() { return width; }
-    public float getHeight() { return height; }
+
     public boolean isFacingLeft() { return facingLeft; }
 
     public float getDamage() {
