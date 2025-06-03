@@ -164,10 +164,17 @@ public class Enemy extends Sprite implements IRecyclable, IBoxCollidable {
         applyKnockbackFrom(target);
 
         if (hp <= 0) {
+            // 경험치 부여
+            if (target instanceof Player) {
+                ((Player) target).gainExp(20); // 예시 경험치
+            }
+
+            // 제거 및 재활용 처리
             Scene.top().remove(MainScene.Layer.enemy, this);
-            Scene.top().collectRecyclable(this); // 재활용 통에 수동 수집
+            Scene.top().collectRecyclable(this);
         }
     }
+
 
     private void applyKnockbackFrom(Player target) {
         if (target == null) return;

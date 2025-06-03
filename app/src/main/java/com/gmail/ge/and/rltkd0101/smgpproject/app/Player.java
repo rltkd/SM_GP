@@ -12,6 +12,10 @@ public class Player extends AnimSprite implements IBoxCollidable {
     private float hp = 100f;
     private static final float MAX_HP = 100f;
 
+    private int exp = 0;
+    private int level = 1;
+    private int expToNextLevel = 100;
+
     private boolean facingLeft = false;
     private final Weapon weapon;
 
@@ -29,6 +33,8 @@ public class Player extends AnimSprite implements IBoxCollidable {
 
     private float lastDirectionX = 1f; // 기본 오른쪽
     private float lastDirectionY = 0f;
+
+
 
 
     public Player(Weapon weapon) {
@@ -201,4 +207,16 @@ public class Player extends AnimSprite implements IBoxCollidable {
     public float getLastDirectionY() {
         return lastDirectionY;
     }
+
+    public void gainExp(int amount) {
+        exp += amount;
+        while (exp >= expToNextLevel) {
+            exp -= expToNextLevel;
+            level++;
+            expToNextLevel = 100 + (level - 1) * 50; // 점점 필요 경험치 증가
+        }
+    }
+
+    public int getExp() { return exp; }
+    public int getExpToNextLevel() { return expToNextLevel; }
 }

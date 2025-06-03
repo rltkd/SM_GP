@@ -37,6 +37,9 @@ public class MainScene extends Scene {
 
         // 몬스터 스폰
         add(Layer.enemy, new EnemySpawner(player));
+
+        add(Layer.UI, new ExpBar(player));
+
     }
 
 
