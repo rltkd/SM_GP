@@ -214,6 +214,8 @@ public class Player extends AnimSprite implements IBoxCollidable {
             exp -= expToNextLevel;
             level++;
             expToNextLevel = 100 + (level - 1) * 50; // 점점 필요 경험치 증가
+
+            LevelUpManager.request(); // 레벨업 알림 요청
         }
     }
 
