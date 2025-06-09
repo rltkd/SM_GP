@@ -11,8 +11,8 @@ public class HandgunWeapon implements Weapon {
 
     @Override
     public void attack(Player player, Scene scene) {
-        float dirX = player.getActuatorX();
-        float dirY = player.getActuatorY();
+        float dirX = player.getLastDirectionX();
+        float dirY = player.getLastDirectionY();
 
 // 완전한 0이면 lastDirection 사용
         if (Math.abs(dirX) < 0.001f && Math.abs(dirY) < 0.001f) {
