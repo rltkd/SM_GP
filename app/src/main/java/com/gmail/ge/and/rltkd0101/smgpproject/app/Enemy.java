@@ -19,26 +19,26 @@ public class Enemy extends Sprite implements IRecyclable, IBoxCollidable {
     private final float baseWidth = 64f;
     private final float baseHeight = 64f;
 
-    public void setScale(float scale) {
-        this.scale = scale;
-        setPosition(x, y, baseWidth * scale, baseHeight * scale);
-    }
-
     private boolean active = true;
     private float speed;
     private Player target;
     private EnemyType type;
     private float hp;
+    private float damage;
 
-    // 피격 쿨타임 + 넉백 관련
     private float hitCooldown = 0f;
     private static final float HIT_COOLDOWN_TIME = 0.3f;
 
     public Enemy() {
-        super(R.mipmap.slime); // 기본 이미지
+        super(R.mipmap.slime);
     }
 
-    public void revive(float x, float y, Player target, EnemyType type) {
+    public void setScale(float scale) {
+        this.scale = scale;
+        setPosition(x, y, baseWidth * scale, baseHeight * scale);
+    }
+
+    public void revive(float x, float y, Player target, EnemyType type, float hpMultiplier, float dmgMultiplier) {
         this.active = true;
         this.target = target;
         this.type = type;
@@ -47,19 +47,22 @@ public class Enemy extends Sprite implements IRecyclable, IBoxCollidable {
             case SLIME:
                 setImageResourceId(R.mipmap.slime);
                 this.speed = 60f;
-                this.hp = 2f;
+                this.hp = 2f * hpMultiplier;
+                this.damage = 2f * dmgMultiplier;
                 setScale(1.0f);
                 break;
             case ZOMBIE:
                 setImageResourceId(R.mipmap.zombie);
                 this.speed = 30f;
-                this.hp = 4f;
+                this.hp = 4f * hpMultiplier;
+                this.damage = 3f * dmgMultiplier;
                 setScale(2.0f);
                 break;
             case GHOST:
                 setImageResourceId(R.mipmap.ghost);
                 this.speed = 100f;
-                this.hp = 1f;
+                this.hp = 1f * hpMultiplier;
+                this.damage = 1f * dmgMultiplier;
                 setScale(0.6f);
                 break;
         }
@@ -67,7 +70,17 @@ public class Enemy extends Sprite implements IRecyclable, IBoxCollidable {
         setPosition(x, y, width, height);
     }
 
+    public float getDamage() {
+        return damage;
+    }
 
+    public boolean canDamagePlayer() {
+        return hitCooldown <= 0f;
+    }
+
+    public void resetDamageCooldown() {
+        hitCooldown = HIT_COOLDOWN_TIME;
+    }
 
     @Override
     public void onRecycle() {
@@ -77,8 +90,8 @@ public class Enemy extends Sprite implements IRecyclable, IBoxCollidable {
         this.speed = 0f;
         this.scale = 1.0f;
         this.type = null;
+        this.damage = 0f;
     }
-
 
     @Override
     public void update() {
@@ -153,18 +166,15 @@ public class Enemy extends Sprite implements IRecyclable, IBoxCollidable {
         applyKnockbackFrom(target);
 
         if (hp <= 0) {
-            // 경험치 부여
             if (target instanceof Player) {
-                ((Player) target).gainExp(200); // 예시 경험치
+                ((Player) target).gainExp(200);
                 ((Player) target).healOnKill();
             }
 
-            // 제거 및 재활용 처리
             Scene.top().remove(MainScene.Layer.enemy, this);
             Scene.top().collectRecyclable(this);
         }
     }
-
 
     private void applyKnockbackFrom(Player target) {
         if (target == null) return;
@@ -174,7 +184,7 @@ public class Enemy extends Sprite implements IRecyclable, IBoxCollidable {
         float dist = (float) Math.sqrt(dx * dx + dy * dy);
 
         if (dist > 0.001f) {
-            float knockback = 40f; // 넉백 거리
+            float knockback = 40f;
             dx = (dx / dist) * knockback;
             dy = (dy / dist) * knockback;
 
