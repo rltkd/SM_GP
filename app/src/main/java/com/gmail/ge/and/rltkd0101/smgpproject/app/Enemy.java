@@ -158,7 +158,8 @@ public class Enemy extends Sprite implements IRecyclable, IBoxCollidable {
         if (hp <= 0) {
             // 경험치 부여
             if (target instanceof Player) {
-                ((Player) target).gainExp(20); // 예시 경험치
+                ((Player) target).gainExp(200); // 예시 경험치
+                ((Player) target).healOnKill();
             }
 
             // 제거 및 재활용 처리

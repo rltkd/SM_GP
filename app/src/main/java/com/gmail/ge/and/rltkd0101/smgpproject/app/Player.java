@@ -1,5 +1,7 @@
 package com.gmail.ge.and.rltkd0101.smgpproject.app;
 
+import static com.gmail.ge.and.rltkd0101.smgpproject.app.PlayerStats.maxHp;
+
 import android.graphics.Canvas;
 import android.graphics.RectF;
 
@@ -35,18 +37,27 @@ public class Player extends AnimSprite implements IBoxCollidable {
     public Player(Weapon weapon) {
         super(weapon.getSpriteResId(), 0f, weapon.getFrameCount());
         this.weapon = weapon;
-        this.hp = PlayerStats.maxHp;
+        this.hp = maxHp;
         setPosition(1500f, 1000f, 150f, 150f);
     }
 
     @Override
     public void update() {
+        updateHealing();
         updateMovement();
         clampPosition();
         updateDamageCooldown();
         updateAttackLogic();
         updateAnimationFrame();
         applyPassiveHeal();
+    }
+
+    // ✅ 1. 초당 자연 회복 처리
+    private void updateHealing() {
+        float heal = PlayerStats.healPerSec * GameView.frameTime;
+        if (heal > 0f && hp < maxHp) {
+            hp = Math.min(maxHp, hp + heal);
+        }
     }
 
     private void updateMovement() {
@@ -108,13 +119,15 @@ public class Player extends AnimSprite implements IBoxCollidable {
     private void applyPassiveHeal() {
         if (PlayerStats.healPerSec > 0f) {
             hp += PlayerStats.healPerSec * GameView.frameTime;
-            if (hp > PlayerStats.maxHp) hp = PlayerStats.maxHp;
+            if (hp > maxHp) hp = maxHp;
         }
     }
 
+    // ✅ 2. 몬스터 처치 시 호출할 치유 함수
     public void healOnKill() {
-        hp += PlayerStats.healOnKill;
-        if (hp > PlayerStats.maxHp) hp = PlayerStats.maxHp;
+        if (PlayerStats.healOnKill > 0f && hp < maxHp) {
+            hp = Math.min(maxHp, hp + PlayerStats.healOnKill);
+        }
     }
 
     public void gainExp(int amount) {
@@ -134,7 +147,7 @@ public class Player extends AnimSprite implements IBoxCollidable {
 
         float reduced = Math.max(0, rawDamage - PlayerStats.defense);
         hp -= reduced;
-        damageThisSecond += reduced;
+        damageThisSecond += (int) reduced;
 
         if (hp <= 0f) {
             hp = 0f;
@@ -143,7 +156,7 @@ public class Player extends AnimSprite implements IBoxCollidable {
     }
 
     public void reset() {
-        this.hp = PlayerStats.maxHp;
+        this.hp = maxHp;
         this.exp = 0;
         this.level = 1;
         this.expToNextLevel = 100;
@@ -183,7 +196,15 @@ public class Player extends AnimSprite implements IBoxCollidable {
         }
     }
 
-    public float getHpRatio() { return hp / PlayerStats.maxHp; }
+    public int getExp() {
+        return exp;
+    }
+
+    public int getExpToNextLevel() {
+        return expToNextLevel;
+    }
+
+    public float getHpRatio() { return hp / maxHp; }
     public int getHp() { return (int) hp; }
     public float getDamage() { return PlayerStats.attack; }
     public float getX() { return x; }
