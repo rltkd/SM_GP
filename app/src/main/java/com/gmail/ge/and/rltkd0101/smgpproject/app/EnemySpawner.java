@@ -3,18 +3,23 @@ package com.gmail.ge.and.rltkd0101.smgpproject.app;
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.interfaces.IGameObject;
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.scene.Scene;
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.view.GameView;
-import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.view.Metrics;
 
 import java.util.Random;
 
 public class EnemySpawner implements IGameObject {
     private float timer = 0f;
-    private final float spawnInterval = 2.0f; // 기본 스폰 간격
+    private final float spawnInterval = 2.0f;
     private float zombieTimer = 0f;
-    private final float zombieSpawnInterval = 15.0f; // 좀비는 15초마다 등장
+    private final float zombieSpawnInterval = 15.0f;
 
     private final Player player;
     private final Random random = new Random();
+
+    // 전체 맵 크기 정의
+    private static final float MAP_WIDTH = 3000f;
+    private static final float MAP_HEIGHT = 2000f;
+    private static final float OFFSET_FROM_PLAYER = 500f;
+    private static final float SPAWN_MARGIN = 100f;
 
     public EnemySpawner(Player player) {
         this.player = player;
@@ -29,32 +34,53 @@ public class EnemySpawner implements IGameObject {
         if (timer >= spawnInterval) {
             timer -= spawnInterval;
 
-            float spawnX = random.nextInt((int) Metrics.width);
-            float spawnY = random.nextInt((int) Metrics.height);
+            float spawnX, spawnY;
+            float px = player.getX();
+            float py = player.getY();
 
-            float dx = spawnX - player.getX();
-            float dy = spawnY - player.getY();
-            float distance = (float) Math.sqrt(dx * dx + dy * dy);
-            if (distance < 200f) return; // 플레이어 근처 스폰 방지
+            int side = random.nextInt(4); // 0: top, 1: bottom, 2: left, 3: right
 
+            switch (side) {
+                case 0: // 상단
+                    spawnX = clamp(random.nextFloat() * MAP_WIDTH, 0f, MAP_WIDTH);
+                    spawnY = py - OFFSET_FROM_PLAYER - random.nextFloat() * SPAWN_MARGIN;
+                    break;
+                case 1: // 하단
+                    spawnX = clamp(random.nextFloat() * MAP_WIDTH, 0f, MAP_WIDTH);
+                    spawnY = py + OFFSET_FROM_PLAYER + random.nextFloat() * SPAWN_MARGIN;
+                    break;
+                case 2: // 좌측
+                    spawnX = px - OFFSET_FROM_PLAYER - random.nextFloat() * SPAWN_MARGIN;
+                    spawnY = clamp(random.nextFloat() * MAP_HEIGHT, 0f, MAP_HEIGHT);
+                    break;
+                case 3: // 우측
+                default:
+                    spawnX = px + OFFSET_FROM_PLAYER + random.nextFloat() * SPAWN_MARGIN;
+                    spawnY = clamp(random.nextFloat() * MAP_HEIGHT, 0f, MAP_HEIGHT);
+                    break;
+            }
+
+            // Enemy 생성
             Enemy enemy = Scene.top().getRecyclable(Enemy.class);
             if (enemy == null) {
                 enemy = new Enemy();
             }
 
-            // 좀비는 별도 타이머 기준
             Enemy.EnemyType type;
             if (zombieTimer >= zombieSpawnInterval) {
                 zombieTimer = 0f;
                 type = Enemy.EnemyType.ZOMBIE;
             } else {
-                // SLIME 또는 GHOST 랜덤 선택
                 type = random.nextBoolean() ? Enemy.EnemyType.SLIME : Enemy.EnemyType.GHOST;
             }
 
             enemy.revive(spawnX, spawnY, player, type);
             Scene.top().add(MainScene.Layer.enemy, enemy);
         }
+    }
+
+    private float clamp(float value, float min, float max) {
+        return Math.max(min, Math.min(value, max));
     }
 
     @Override

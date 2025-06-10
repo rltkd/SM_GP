@@ -67,17 +67,9 @@ public class Enemy extends Sprite implements IRecyclable, IBoxCollidable {
                 break;
         }
 
- /*       setPosition(x, y, 64, 64);*/
+        setPosition(x, y, width, height);
     }
 
-    public static boolean canSpawnZombie() {
-        zombieSpawnTimer += GameView.frameTime;
-        if (zombieSpawnTimer >= ZOMBIE_SPAWN_INTERVAL) {
-            zombieSpawnTimer = 0f;
-            return true;
-        }
-        return false;
-    }
 
 
     @Override
