@@ -8,7 +8,7 @@ import java.util.Random;
 
 public class EnemySpawner implements IGameObject {
     private float timer = 0f;
-    private final float spawnInterval = 1.0f;
+    private final float spawnInterval = 2.0f;
     private float zombieTimer = 0f;
     private final float zombieSpawnInterval = 15.0f;
 

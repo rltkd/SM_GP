@@ -28,10 +28,6 @@ public class Player extends AnimSprite implements IBoxCollidable {
     private float actuatorX = 1f;
     private float actuatorY = 0f;
 
-    private float damageTimer = 0f;
-    private int damageThisSecond = 0;
-    private static final int MAX_DAMAGE_PER_SECOND = 5;
-
     private float lastDirectionX = 1f;
     private float lastDirectionY = 0f;
 
@@ -48,7 +44,6 @@ public class Player extends AnimSprite implements IBoxCollidable {
     public void update() {
         updateMovement();
         clampPosition();
-        updateDamageCooldown();
         updateAttackLogic();
         updateAnimationFrame();
         applyPassiveHealing();
@@ -104,14 +99,6 @@ public class Player extends AnimSprite implements IBoxCollidable {
         }
     }
 
-    private void updateDamageCooldown() {
-        damageTimer += GameView.frameTime;
-        if (damageTimer >= 1.0f) {
-            damageTimer = 0f;
-            damageThisSecond = 0;
-        }
-    }
-
     private void applyPassiveHealing() {
         if (PlayerStats.healPerSec > 0f) {
             hp = Math.min(hp + PlayerStats.healPerSec * GameView.frameTime, maxHp);
@@ -123,14 +110,12 @@ public class Player extends AnimSprite implements IBoxCollidable {
             hp = Math.min(maxHp, hp + PlayerStats.healOnKill);
         }
     }
-    public void takeDamage(float damage) {
-        if (damageThisSecond + damage > MAX_DAMAGE_PER_SECOND) return;
 
+    public void takeDamage(float damage) {
         float reduction = Math.min(PlayerStats.defense * 0.01f, 0.75f);
         float effectiveDamage = damage * (1f - reduction);
 
         hp -= effectiveDamage;
-        damageThisSecond += (int) effectiveDamage;
         if (hp < 0f) hp = 0f;
 
         if (hp <= 0f) {
@@ -163,13 +148,6 @@ public class Player extends AnimSprite implements IBoxCollidable {
         }
     }
 
- /*   public void reset() {
-        this.maxHp = PlayerStats.maxHp;
-        this.hp = maxHp;
-        damageTimer = 0f;
-        damageThisSecond = 0;
-    }
-*/
     @Override
     public void draw(Canvas canvas) {
         int frameWidth = bitmap.getWidth() / frameCount;
@@ -210,9 +188,8 @@ public class Player extends AnimSprite implements IBoxCollidable {
     }
 
     public RectF getCollisionRect() { return getHitBox(); }
+
     public RectF getAttackBox() {
         return weapon != null ? weapon.getAttackBox(this) : new RectF(0, 0, 0, 0);
     }
-
-
 }
