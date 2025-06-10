@@ -1,7 +1,5 @@
 package com.gmail.ge.and.rltkd0101.smgpproject.app;
 
-import static com.gmail.ge.and.rltkd0101.smgpproject.app.PlayerStats.maxHp;
-
 import android.graphics.Canvas;
 import android.graphics.RectF;
 
@@ -12,6 +10,9 @@ import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.view.GameView;
 
 public class Player extends AnimSprite implements IBoxCollidable {
     private float hp;
+    private float maxHp;
+    private float speed;
+
     private int exp = 0;
     private int level = 1;
     private int expToNextLevel = 100;
@@ -29,7 +30,7 @@ public class Player extends AnimSprite implements IBoxCollidable {
 
     private float damageTimer = 0f;
     private int damageThisSecond = 0;
-    private static final int MAX_DAMAGE_PER_SECOND = 6;
+    private static final int MAX_DAMAGE_PER_SECOND = 5;
 
     private float lastDirectionX = 1f;
     private float lastDirectionY = 0f;
@@ -37,45 +38,48 @@ public class Player extends AnimSprite implements IBoxCollidable {
     public Player(Weapon weapon) {
         super(weapon.getSpriteResId(), 0f, weapon.getFrameCount());
         this.weapon = weapon;
+        this.maxHp = PlayerStats.maxHp;
         this.hp = maxHp;
+        this.speed = PlayerStats.moveSpeed;
         setPosition(1500f, 1000f, 150f, 150f);
     }
 
     @Override
     public void update() {
-        updateHealing();
         updateMovement();
         clampPosition();
         updateDamageCooldown();
         updateAttackLogic();
         updateAnimationFrame();
-        applyPassiveHeal();
-    }
-
-    // ✅ 1. 초당 자연 회복 처리
-    private void updateHealing() {
-        float heal = PlayerStats.healPerSec * GameView.frameTime;
-        if (heal > 0f && hp < maxHp) {
-            hp = Math.min(maxHp, hp + heal);
-        }
+        applyPassiveHealing();
     }
 
     private void updateMovement() {
-        float distance = PlayerStats.moveSpeed * GameView.frameTime;
+        this.speed = PlayerStats.moveSpeed;
+        float distance = speed * GameView.frameTime;
         x += actuatorX * distance;
         y += actuatorY * distance;
+    }
+
+    private void clampPosition() {
+        float halfW = width / 2f;
+        float halfH = height / 2f;
+        x = Math.max(halfW, Math.min(x, 3000f - halfW));
+        y = Math.max(halfH, Math.min(y, 2000f - halfH));
+        setPosition(x, y, width, height);
     }
 
     private void updateAttackLogic() {
         if (weapon == null) return;
 
+        float cooldown = weapon.getCooldown() / PlayerStats.attackSpeed;
         if (attackCooldown > 0f) {
             attackCooldown -= GameView.frameTime;
             return;
         }
 
         weapon.attack(this, Scene.top());
-        attackCooldown = weapon.getCooldown();
+        attackCooldown = cooldown;
 
         isAttacking = true;
         animationTimer = 0f;
@@ -89,23 +93,15 @@ public class Player extends AnimSprite implements IBoxCollidable {
         }
 
         int frameCount = weapon.getFrameCount();
-        float frameDuration = weapon.getCooldown() / frameCount;
+        float frameDuration = (weapon.getCooldown() / PlayerStats.attackSpeed) / frameCount;
 
         animationTimer += GameView.frameTime;
-        currentFrame = (int)(animationTimer / frameDuration);
+        currentFrame = (int) (animationTimer / frameDuration);
 
         if (currentFrame >= frameCount) {
             currentFrame = frameCount - 1;
             isAttacking = false;
         }
-    }
-
-    private void clampPosition() {
-        float halfW = width / 2f;
-        float halfH = height / 2f;
-        x = Math.max(halfW, Math.min(x, 3000f - halfW));
-        y = Math.max(halfH, Math.min(y, 2000f - halfH));
-        setPosition(x, y, width, height);
     }
 
     private void updateDamageCooldown() {
@@ -116,54 +112,64 @@ public class Player extends AnimSprite implements IBoxCollidable {
         }
     }
 
-    private void applyPassiveHeal() {
+    private void applyPassiveHealing() {
         if (PlayerStats.healPerSec > 0f) {
-            hp += PlayerStats.healPerSec * GameView.frameTime;
-            if (hp > maxHp) hp = maxHp;
+            hp = Math.min(hp + PlayerStats.healPerSec * GameView.frameTime, maxHp);
         }
     }
 
-    // ✅ 2. 몬스터 처치 시 호출할 치유 함수
     public void healOnKill() {
         if (PlayerStats.healOnKill > 0f && hp < maxHp) {
             hp = Math.min(maxHp, hp + PlayerStats.healOnKill);
         }
     }
+    public void takeDamage(float damage) {
+        if (damageThisSecond + damage > MAX_DAMAGE_PER_SECOND) return;
+
+        float reduction = Math.min(PlayerStats.defense * 0.01f, 0.75f);
+        float effectiveDamage = damage * (1f - reduction);
+
+        hp -= effectiveDamage;
+        damageThisSecond += (int) effectiveDamage;
+        if (hp < 0f) hp = 0f;
+
+        if (hp <= 0f) {
+            System.out.println("Player died!");
+            // TODO: Game Over 처리
+        }
+    }
 
     public void gainExp(int amount) {
         exp += amount;
-        while (exp >= expToNextLevel) {
+        if (exp >= expToNextLevel) {
             exp -= expToNextLevel;
             level++;
             expToNextLevel = 100 + (level - 1) * 50;
-
-            GameView.view.pauseGame();      // 게임 일시정지
-            LevelUpManager.request();       // 강화창 알림
+            GameView.view.pauseGame();
+            LevelUpManager.request();
         }
     }
 
-    public void takeDamage(float rawDamage) {
-        if (damageThisSecond >= MAX_DAMAGE_PER_SECOND) return;
+    public void setActuator(float ax, float ay) {
+        this.actuatorX = ax;
+        this.actuatorY = ay;
 
-        float reduced = Math.max(0, rawDamage - PlayerStats.defense);
-        hp -= reduced;
-        damageThisSecond += (int) reduced;
-
-        if (hp <= 0f) {
-            hp = 0f;
-            // TODO: 게임 오버 처리
+        if (Math.abs(ax) > 0.01f || Math.abs(ay) > 0.01f) {
+            lastDirectionX = ax;
+            lastDirectionY = ay;
+            if (Math.abs(ax) > 0.01f) {
+                this.facingLeft = ax < 0;
+            }
         }
     }
 
-    public void reset() {
+ /*   public void reset() {
+        this.maxHp = PlayerStats.maxHp;
         this.hp = maxHp;
-        this.exp = 0;
-        this.level = 1;
-        this.expToNextLevel = 100;
-        this.damageTimer = 0f;
-        this.damageThisSecond = 0;
+        damageTimer = 0f;
+        damageThisSecond = 0;
     }
-
+*/
     @Override
     public void draw(Canvas canvas) {
         int frameWidth = bitmap.getWidth() / frameCount;
@@ -183,35 +189,19 @@ public class Player extends AnimSprite implements IBoxCollidable {
         dstRect.offset(GameView.offsetX, GameView.offsetY);
     }
 
-    public void setActuator(float ax, float ay) {
-        this.actuatorX = ax;
-        this.actuatorY = ay;
-
-        if (Math.abs(ax) > 0.01f || Math.abs(ay) > 0.01f) {
-            lastDirectionX = ax;
-            lastDirectionY = ay;
-            if (Math.abs(ax) > 0.01f) {
-                this.facingLeft = ax < 0;
-            }
-        }
-    }
-
-    public int getExp() {
-        return exp;
-    }
-
-    public int getExpToNextLevel() {
-        return expToNextLevel;
-    }
-
     public float getHpRatio() { return hp / maxHp; }
     public int getHp() { return (int) hp; }
-    public float getDamage() { return PlayerStats.attack; }
+    public int getExp() { return exp; }
+    public int getExpToNextLevel() { return expToNextLevel; }
+
     public float getX() { return x; }
     public float getY() { return y; }
     public boolean isFacingLeft() { return facingLeft; }
     public float getLastDirectionX() { return lastDirectionX; }
     public float getLastDirectionY() { return lastDirectionY; }
+
+    public float getDamage() { return PlayerStats.attack; }
+
     public RectF getHitBox() {
         float scale = 0.7f;
         float w = width * scale;
@@ -223,4 +213,6 @@ public class Player extends AnimSprite implements IBoxCollidable {
     public RectF getAttackBox() {
         return weapon != null ? weapon.getAttackBox(this) : new RectF(0, 0, 0, 0);
     }
+
+
 }
