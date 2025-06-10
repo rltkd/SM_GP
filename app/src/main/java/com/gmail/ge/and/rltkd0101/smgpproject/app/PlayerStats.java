@@ -6,26 +6,42 @@ public class PlayerStats {
     public static float moveSpeed = 250f;
     public static float attack = 1.0f;
     public static float defense = 0.0f;
+    public static float attackSpeed = 1.0f;
 
-    // 회복 관련
-    public static float healPerSec = 0.0f;   // 초당 회복
-    public static float healOnKill = 0.0f;   // 처치 시 회복
+    // 강화 관련 옵션
+    public static float healPerSec = 0.0f;   // 자연 회복량
+    public static float healOnKill = 0.0f;   // 몬스터 처치 시 회복량
 
-    // 원래 초기화 값 저장 (리셋 시 참고)
-    private static final float DEFAULT_MAX_HP = 100f;
-    private static final float DEFAULT_MOVE_SPEED = 250f;
-    private static final float DEFAULT_ATTACK = 1.0f;
-    private static final float DEFAULT_DEFENSE = 0.0f;
-    private static final float DEFAULT_HEAL_PER_SEC = 0.0f;
-    private static final float DEFAULT_HEAL_ON_KILL = 0.0f;
-
-    // 스탯 리셋 (게임 재시작 등)
+    // 유틸
     public static void reset() {
-        maxHp = DEFAULT_MAX_HP;
-        moveSpeed = DEFAULT_MOVE_SPEED;
-        attack = DEFAULT_ATTACK;
-        defense = DEFAULT_DEFENSE;
-        healPerSec = DEFAULT_HEAL_PER_SEC;
-        healOnKill = DEFAULT_HEAL_ON_KILL;
+        maxHp = 100f;
+        moveSpeed = 250f;
+        attack = 1.0f;
+        defense = 0.0f;
+        attackSpeed = 1.0f;
+        healPerSec = 0.0f;
+        healOnKill = 0.0f;
+    }
+
+    public enum StatType {
+        MAX_HP,
+        ATTACK,
+        DEFENSE,
+        MOVE_SPEED,
+        ATTACK_SPEED,
+        HEAL_PER_SEC,
+        HEAL_ON_KILL
+    }
+
+    public static void applyStatUpgrade(StatType statType, float value) {
+        switch (statType) {
+            case MAX_HP: maxHp += value; break;
+            case ATTACK: attack += value; break;
+            case DEFENSE: defense += value; break;
+            case MOVE_SPEED: moveSpeed += value; break;
+            case ATTACK_SPEED: attackSpeed += value; break;
+            case HEAL_PER_SEC: healPerSec += value; break;
+            case HEAL_ON_KILL: healOnKill += value; break;
+        }
     }
 }

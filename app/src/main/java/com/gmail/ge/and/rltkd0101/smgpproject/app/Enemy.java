@@ -34,9 +34,6 @@ public class Enemy extends Sprite implements IRecyclable, IBoxCollidable {
     private float hitCooldown = 0f;
     private static final float HIT_COOLDOWN_TIME = 0.3f;
 
-    private static float zombieSpawnTimer = 0f;
-    private static final float ZOMBIE_SPAWN_INTERVAL = 15.0f;
-
     public Enemy() {
         super(R.mipmap.slime); // 기본 이미지
     }

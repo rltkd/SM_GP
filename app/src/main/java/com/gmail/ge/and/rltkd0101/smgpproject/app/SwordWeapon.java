@@ -12,9 +12,10 @@ import java.util.List;
 
 public class SwordWeapon implements Weapon {
     public static final float BASE_DAMAGE = 1.0f;
-    public static final float COOLDOWN = 1.0f;
+    public static final float COOLDOWN = 1.5f;
     public static final int FRAME_COUNT = 3;
 
+    private float attackSpeed = 1.0f;
     @Override
     public void attack(Player player, Scene scene) {
         RectF box = getAttackBox(player);
@@ -69,11 +70,16 @@ public class SwordWeapon implements Weapon {
 
     @Override
     public float getCooldown() {
-        return COOLDOWN;
+        return COOLDOWN/attackSpeed;
     }
 
     @Override
     public int getFrameCount() {
         return FRAME_COUNT;
     }
+    @Override
+    public void increaseAttackSpeed(float multiplier) {
+        attackSpeed *= (1.0f + multiplier);
+    }
+
 }

@@ -1,7 +1,5 @@
 package com.gmail.ge.and.rltkd0101.smgpproject.app;
 
-import static java.lang.Math.round;
-
 import android.annotation.SuppressLint;
 
 import java.util.ArrayList;
@@ -10,84 +8,81 @@ import java.util.List;
 import java.util.Random;
 
 public class UpgradeRegistry {
-    private static final List<UpgradeOption> allOptions = new ArrayList<>();
     private static final Random random = new Random();
 
     public static List<UpgradeOption> getRandomOptions(int count) {
-        List<UpgradeOption> randomOptions = new ArrayList<>();
+        List<UpgradeOption> result = new ArrayList<>();
+        List<PlayerStats.StatType> allTypes = new ArrayList<>();
 
-        // 매번 새로운 UpgradeOption을 생성
-        for (int i = 0; i < 6; i++) {
-            randomOptions.add(createRandomOption(i));
+        Collections.addAll(allTypes, PlayerStats.StatType.values());
+        Collections.shuffle(allTypes);
+
+        for (int i = 0; i < count && i < allTypes.size(); i++) {
+            PlayerStats.StatType statType = allTypes.get(i);
+            result.add(generateOption(statType));
         }
+        return result;
+    }
 
-        Collections.shuffle(randomOptions);
-        return randomOptions.subList(0, Math.min(count, randomOptions.size()));
+    private static UpgradeOption generateOption(PlayerStats.StatType statType) {
+        float value;
+        String name;
+        String description;
+
+        switch (statType) {
+            case ATTACK:
+                value = randomRange(0.1f, 1.0f);
+                name = "공격력 +" + format(value);
+                description = "기본 공격력이 " + format(value) + " 증가합니다.";
+                return new UpgradeOption(name, description, 0, () -> PlayerStats.attack += value);
+
+            case MOVE_SPEED:
+                value = randomRange(1f, 15f);
+                name = "이동속도 +" + format(value);
+                description = "이동속도가 " + format(value) + " 증가합니다.";
+                return new UpgradeOption(name, description, 0, () -> PlayerStats.moveSpeed += value);
+
+            case MAX_HP:
+                value = randomRange(1f, 10f);
+                name = "최대 체력 +" + format(value);
+                description = "최대 체력이 " + format(value) + " 증가합니다.";
+                return new UpgradeOption(name, description, 0, () -> PlayerStats.maxHp += value);
+
+            case DEFENSE:
+                value = randomRange(0.1f, 1.0f);
+                name = "방어력 +" + format(value);
+                description = "받는 피해가 줄어듭니다.";
+                return new UpgradeOption(name, description, 0, () -> PlayerStats.defense += value);
+
+            case HEAL_PER_SEC:
+                value = randomRange(0.1f, 0.8f);
+                name = "자연회복 +" + format(value);
+                description = "초당 체력이 " + format(value) + " 회복됩니다.";
+                return new UpgradeOption(name, description, 0, () -> PlayerStats.healPerSec += value);
+
+            case HEAL_ON_KILL:
+                value = randomRange(0.2f, 1.0f);
+                name = "처치 회복 +" + format(value);
+                description = "적 처치 시 체력 " + format(value) + " 회복.";
+                return new UpgradeOption(name, description, 0, () -> PlayerStats.healOnKill += value);
+
+            case ATTACK_SPEED:
+                value = randomRange(0.1f, 0.3f);
+                name = "공격속도 +" + format(value);
+                description = "공격속도가 증가합니다.";
+                return new UpgradeOption(name, description, 0, () -> PlayerStats.attackSpeed += value);
+
+            default:
+                return new UpgradeOption("미정", "설정되지 않은 옵션입니다.", 0, () -> {});
+        }
+    }
+
+    private static float randomRange(float min, float max) {
+        return min + random.nextFloat() * (max - min);
     }
 
     @SuppressLint("DefaultLocale")
-    private static UpgradeOption createRandomOption(int index) {
-        switch (index) {
-            case 0: {
-                float value = getRandom(0.3f, 1.0f);
-                return new UpgradeOption(
-                        "공격력 +" + String.format("%.1f", value),
-                        "기본 공격력이 " + value + " 만큼 증가합니다.",
-                        0,
-                        () -> PlayerStats.attack += value
-                );
-            }
-            case 1: {
-                float value = getRandom(5f, 20f);
-                return new UpgradeOption(
-                        "이동속도 +" + (int)value,
-                        "이동 속도가 " + (int)value + " 증가합니다.",
-                        0,
-                        () -> PlayerStats.moveSpeed += value
-                );
-            }
-            case 2: {
-                float value = getRandom(5f, 15f);
-                return new UpgradeOption(
-                        "최대 체력 +" + (int)value,
-                        "최대 체력이 " + (int)value + " 증가합니다.",
-                        0,
-                        () -> PlayerStats.maxHp += value
-                );
-            }
-            case 3: {
-                float value = getRandom(0.5f, 2.0f);
-                return new UpgradeOption(
-                        "방어력 +" + String.format("%.1f", value),
-                        "방어력이 " + value + " 만큼 증가합니다.",
-                        0,
-                        () -> PlayerStats.defense += value
-                );
-            }
-            case 4: {
-                float value = getRandom(0.1f, 0.5f);
-                return new UpgradeOption(
-                        "자연 회복 +" + String.format("%.1f", value),
-                        "초당 " + value + " 만큼 체력이 회복됩니다.",
-                        0,
-                        () -> PlayerStats.healPerSec += value
-                );
-            }
-            case 5: {
-                float value = getRandom(1f, 4f);
-                return new UpgradeOption(
-                        "처치 시 회복 +" + (int)value,
-                        "몬스터 처치 시 체력이 " + (int)value + " 회복됩니다.",
-                        0,
-                        () -> PlayerStats.healOnKill += value
-                );
-            }
-            default:
-                return null;
-        }
-    }
-
-    private static float getRandom(float min, float max) {
-        return min + random.nextFloat() * (max - min);
+    private static String format(float value) {
+        return String.format("%.1f", value);
     }
 }

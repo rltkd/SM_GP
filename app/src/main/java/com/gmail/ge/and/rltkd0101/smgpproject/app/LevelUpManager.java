@@ -1,5 +1,7 @@
 package com.gmail.ge.and.rltkd0101.smgpproject.app;
 
+import static com.gmail.ge.and.rltkd0101.smgpproject.app.UpgradeRegistry.getRandomOptions;
+
 import android.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +22,7 @@ public class LevelUpManager {
 
         GameView.view.pauseGame();
 
-        List<UpgradeOption> upgrades = UpgradeRegistry.getRandomOptions(3);
+        List<UpgradeOption> upgrades = getRandomOptions(3);
 
         GameView.view.post(() -> {
             LayoutInflater inflater = LayoutInflater.from(GameView.view.getContext());
