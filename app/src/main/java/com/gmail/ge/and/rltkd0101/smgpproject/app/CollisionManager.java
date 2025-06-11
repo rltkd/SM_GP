@@ -26,8 +26,13 @@ public class CollisionManager {
     public static void handleEnemyCollision(Scene scene, Player player) {
         for (Enemy enemy : getActiveEnemies(scene)) {
             if (CollisionHelper.collides(enemy, player)) {
-                player.takeDamage(1);
+                if (enemy.canDamagePlayer()) {
+                    player.takeDamage(enemy.getDamage());
+                    enemy.resetDamageCooldown();
+                }
             }
+
+            enemy.updateDamageCooldown(); // 쿨타임 감소
         }
     }
 

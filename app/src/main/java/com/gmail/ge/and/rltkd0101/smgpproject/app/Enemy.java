@@ -11,6 +11,14 @@ import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.scene.Scene;
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.view.GameView;
 
 public class Enemy extends Sprite implements IRecyclable, IBoxCollidable {
+    private float damageCooldown = 0f;
+
+    public void updateDamageCooldown() {
+        if (damageCooldown > 0f) {
+            damageCooldown -= GameView.frameTime;
+        }
+    }
+
     public enum EnemyType {
         SLIME, ZOMBIE, GHOST
     }
@@ -46,21 +54,21 @@ public class Enemy extends Sprite implements IRecyclable, IBoxCollidable {
         switch (type) {
             case SLIME:
                 setImageResourceId(R.mipmap.slime);
-                this.speed = 60f;
+                this.speed = 40f;
                 this.hp = 2f * hpMultiplier;
                 this.damage = 2f * dmgMultiplier;
                 setScale(1.0f);
                 break;
             case ZOMBIE:
                 setImageResourceId(R.mipmap.zombie);
-                this.speed = 30f;
+                this.speed = 20f;
                 this.hp = 4f * hpMultiplier;
                 this.damage = 3f * dmgMultiplier;
                 setScale(2.0f);
                 break;
             case GHOST:
                 setImageResourceId(R.mipmap.ghost);
-                this.speed = 100f;
+                this.speed = 60f;
                 this.hp = 1f * hpMultiplier;
                 this.damage = 1f * dmgMultiplier;
                 setScale(0.6f);
@@ -75,11 +83,12 @@ public class Enemy extends Sprite implements IRecyclable, IBoxCollidable {
     }
 
     public boolean canDamagePlayer() {
-        return hitCooldown <= 0f;
+        return damageCooldown <= 0f;
     }
 
+
     public void resetDamageCooldown() {
-        hitCooldown = HIT_COOLDOWN_TIME;
+        damageCooldown = 1.0f;
     }
 
     @Override
@@ -184,7 +193,7 @@ public class Enemy extends Sprite implements IRecyclable, IBoxCollidable {
         float dist = (float) Math.sqrt(dx * dx + dy * dy);
 
         if (dist > 0.001f) {
-            float knockback = 40f;
+            float knockback = 50f;
             dx = (dx / dist) * knockback;
             dy = (dy / dist) * knockback;
 
