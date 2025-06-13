@@ -214,6 +214,11 @@ public class GameView extends View implements Choreographer.FrameCallback {
         view = null;
     }
 
+    public boolean isPaused() {
+        return !running;
+    }
+
+
     private Paint borderPaint, gridPaint, fpsPaint;
     private void drawDebugBackground(@NonNull Canvas canvas) {
         if (borderPaint == null) {
