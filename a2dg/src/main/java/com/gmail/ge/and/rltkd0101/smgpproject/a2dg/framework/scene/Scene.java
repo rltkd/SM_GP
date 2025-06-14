@@ -24,6 +24,12 @@ public class Scene {
     //////////////////////////////////////////////////
     // Game Object Management
 
+    private boolean transparent = false;
+
+    public void setTransparent(boolean b) {
+        this.transparent = b;
+    }
+
     protected void initLayers(int layerCount) {
         layers.clear();
         for (int i = 0; i < layerCount; i++) {
