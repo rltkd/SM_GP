@@ -16,7 +16,6 @@ public class Metrics {
     private static final Matrix invertedMatrix = new Matrix();
     private static final float[] pointsBuffer = new float[2];
 
-
     public static void setGameSize(float width, float height) {
         Metrics.width = width;
         Metrics.height = height;

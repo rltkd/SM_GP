@@ -8,6 +8,12 @@ import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.view.GameView;
 public class MainScene extends Scene {
     private final Player player;
 
+    @Override
+    public boolean onBackPressed() {
+        GameView.view.pushScene(new PausePopupScene(this));
+        return true;
+    }
+
     public enum Layer {
         bg, Player, UI, enemy, bullet;
         public static final int COUNT = values().length;
