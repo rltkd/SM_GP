@@ -9,32 +9,33 @@ import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.scene.Scene;
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.view.GameView;
 
 public class StatPopupScene extends Scene {
-    private final String[] lines = {
-            "최대 체력: " + PlayerStats.maxHp,
-            "공격력: " + PlayerStats.attack,
-            "방어력: " + PlayerStats.defense,
-            "이동속도: " + PlayerStats.moveSpeed,
-            "공격속도: " + PlayerStats.attackSpeed,
-            "초당 회복량: " + PlayerStats.healPerSec,
-            "처치 회복량: " + PlayerStats.healOnKill,
-            "← 화면 터치 시 닫기"
-    };
 
     @Override
     public void update() {
-        // nothing
+        // no logic
     }
 
     @Override
     public void draw(Canvas canvas) {
         Paint paint = new Paint();
         paint.setTextSize(60f);
-        paint.setColor(Color.YELLOW);
-        float x = 100f, y = 200f;
-        for (String line : lines) {
-            canvas.drawText(line, x, y, paint);
-            y += 100f;
-        }
+        paint.setColor(Color.BLACK); // 가시성 좋은 검정색
+        float x = 600f, y = 100f;
+
+        canvas.drawText("최대 체력: " + format(PlayerStats.maxHp), x, y, paint); y += 100f;
+        canvas.drawText("공격력: " + format(PlayerStats.attack), x, y, paint); y += 100f;
+        canvas.drawText("방어력: " + format(PlayerStats.defense), x, y, paint); y += 100f;
+        canvas.drawText("이동속도: " + format(PlayerStats.moveSpeed), x, y, paint); y += 100f;
+        canvas.drawText("공격속도: " + format(PlayerStats.attackSpeed), x, y, paint); y += 100f;
+        canvas.drawText("초당 회복량: " + format(PlayerStats.healPerSec), x, y, paint); y += 100f;
+        canvas.drawText("처치 회복량: " + format(PlayerStats.healOnKill), x, y, paint); y += 120f;
+
+        paint.setColor(Color.DKGRAY);
+        canvas.drawText("← 화면 터치 시 닫기", x, y, paint);
+    }
+
+    private String format(float value) {
+        return String.format("%.2f", value); // 소수점 둘째 자리까지
     }
 
     @Override
