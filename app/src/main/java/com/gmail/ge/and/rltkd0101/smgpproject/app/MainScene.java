@@ -10,7 +10,7 @@ public class MainScene extends Scene {
 
     @Override
     public boolean onBackPressed() {
-        GameView.view.pushScene(new PausePopupScene(this));
+        GameView.view.pushScene(new PausePopupScene());
         return true;
     }
 
