@@ -86,7 +86,6 @@ public class Enemy extends Sprite implements IRecyclable, IBoxCollidable {
         return damageCooldown <= 0f;
     }
 
-
     public void resetDamageCooldown() {
         damageCooldown = 1.0f;
     }
@@ -108,6 +107,10 @@ public class Enemy extends Sprite implements IRecyclable, IBoxCollidable {
 
         updateHitCooldown();
         moveTowardsTarget();
+
+        if (type == EnemyType.GHOST) {
+            resolveOverlapWithPlayer();
+        }
     }
 
     private boolean isReadyToMove() {
@@ -134,6 +137,22 @@ public class Enemy extends Sprite implements IRecyclable, IBoxCollidable {
         y += normY * move;
 
         setPosition(x, y, width, height);
+    }
+
+    private void resolveOverlapWithPlayer() {
+        float overlapDistance = 8f;
+        float dx = x - target.getX();
+        float dy = y - target.getY();
+        float distance = (float) Math.sqrt(dx * dx + dy * dy);
+
+        float minDistance = (this.width + target.getHitBox().width()) / 2f;
+
+        if (distance < minDistance && distance > 0f) {
+            float pushBack = (minDistance - distance) + overlapDistance;
+            x += (dx / distance) * pushBack;
+            y += (dy / distance) * pushBack;
+            setPosition(x, y, width, height);
+        }
     }
 
     @Override
