@@ -195,7 +195,7 @@ public class Enemy extends Sprite implements IRecyclable, IBoxCollidable {
 
         if (hp <= 0) {
             if (target instanceof Player) {
-                ((Player) target).gainExp(200);
+                ((Player) target).gainExp(25);
                 ((Player) target).healOnKill();
             }
 
