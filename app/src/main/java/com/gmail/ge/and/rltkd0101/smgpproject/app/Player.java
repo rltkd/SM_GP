@@ -120,7 +120,8 @@ public class Player extends AnimSprite implements IBoxCollidable {
 
         if (hp <= 0f) {
             System.out.println("Player died!");
-            // TODO: Game Over 처리
+            GameView.view.pauseGame();
+            new GameOverPopupScene().push();
         }
     }
 
