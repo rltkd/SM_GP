@@ -13,9 +13,9 @@ public class Player extends AnimSprite implements IBoxCollidable {
     private float maxHp;
     private float speed;
 
-    private int exp = 0;
-    private int level = 1;
-    private int expToNextLevel = 100;
+    private int exp;
+    private int level;
+    private int expToNextLevel;
 
     private boolean facingLeft = false;
     private final Weapon weapon;
@@ -34,14 +34,21 @@ public class Player extends AnimSprite implements IBoxCollidable {
     public Player(Weapon weapon) {
         super(weapon.getSpriteResId(), 0f, weapon.getFrameCount());
         this.weapon = weapon;
+
         this.maxHp = PlayerStats.maxHp;
         this.hp = maxHp;
         this.speed = PlayerStats.moveSpeed;
+
+        this.exp = 0;
+        this.level = 1;
+        this.expToNextLevel = 100;
+
         setPosition(1500f, 1000f, 150f, 150f);
     }
 
     @Override
     public void update() {
+        syncStats();
         updateMovement();
         clampPosition();
         updateAttackLogic();
@@ -49,8 +56,14 @@ public class Player extends AnimSprite implements IBoxCollidable {
         applyPassiveHealing();
     }
 
-    private void updateMovement() {
+    private void syncStats() {
+        float hpRatio = hp / maxHp;
+        this.maxHp = PlayerStats.maxHp;
         this.speed = PlayerStats.moveSpeed;
+        this.hp = hpRatio * maxHp; // 현재 비율 유지
+    }
+
+    private void updateMovement() {
         float distance = speed * GameView.frameTime;
         x += actuatorX * distance;
         y += actuatorY * distance;
@@ -168,8 +181,10 @@ public class Player extends AnimSprite implements IBoxCollidable {
         dstRect.offset(GameView.offsetX, GameView.offsetY);
     }
 
+    // Getter
     public float getHpRatio() { return hp / maxHp; }
     public int getHp() { return (int) hp; }
+    public float getMaxHp() { return maxHp; }
     public int getExp() { return exp; }
     public int getExpToNextLevel() { return expToNextLevel; }
 

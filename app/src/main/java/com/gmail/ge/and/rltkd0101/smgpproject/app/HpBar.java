@@ -45,6 +45,6 @@ public class HpBar implements IGameObject {
         baseRect.right = left + hpWidth;
         canvas.drawRect(baseRect, barPaint);
 
-        canvas.drawText("HP: " + player.getHp(), left + 10f, top + height + 30f, textPaint);
+        canvas.drawText("HP: " + player.getHp() + " / " + (int)player.getMaxHp(), left + 10f, top + height + 30f, textPaint);
     }
 }
