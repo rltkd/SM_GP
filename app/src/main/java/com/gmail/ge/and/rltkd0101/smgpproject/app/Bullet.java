@@ -11,7 +11,10 @@ import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.scene.Scene;
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.util.CollisionHelper;
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.view.GameView;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Bullet implements IGameObject, IRecyclable {
     private float x, y;
@@ -24,12 +27,10 @@ public class Bullet implements IGameObject, IRecyclable {
     private float distanceTraveled = 0f;
     private final float maxDistance = 2000f;
 
+    private final Set<Enemy> hitEnemies = new HashSet<>(); // 중복 피격 방지용
+
     public Bullet(float x, float y, float dx, float dy, float damage) {
-        this.x = x;
-        this.y = y;
-        this.dx = dx;
-        this.dy = dy;
-        this.damage = damage;
+        init(x, y, dx, dy, damage);
     }
 
     @Override
@@ -41,10 +42,10 @@ public class Bullet implements IGameObject, IRecyclable {
         y += dy * dist;
         distanceTraveled += dist;
 
-        // 몬스터와 충돌 처리
         RectF bulletRect = getCollisionRect();
-        MainScene mainScene = (MainScene) Scene.top(); // ✅ Scene.top() 사용
-        List<IGameObject> enemies = mainScene.objectsAt(MainScene.Layer.enemy);
+        MainScene mainScene = (MainScene) Scene.top();
+        List<IGameObject> enemies = new ArrayList<>(mainScene.objectsAt(MainScene.Layer.enemy));
+
 
         for (IGameObject obj : enemies) {
             if (!(obj instanceof Enemy)) continue;
@@ -52,13 +53,13 @@ public class Bullet implements IGameObject, IRecyclable {
             if (!enemy.isActive()) continue;
 
             if (CollisionHelper.collides(bulletRect, enemy.getCollisionRect())) {
-                enemy.hit(damage);
-                deactivate();
-                return;
+                if (!hitEnemies.contains(enemy)) {
+                    enemy.hit(damage);
+                    hitEnemies.add(enemy); // ✅ 중복 피격 방지
+                }
             }
         }
 
-        // 사거리 초과 시 비활성화
         if (distanceTraveled > maxDistance) {
             deactivate();
         }
@@ -70,21 +71,18 @@ public class Bullet implements IGameObject, IRecyclable {
         this.dx = dx;
         this.dy = dy;
         this.damage = damage;
-        this.active = true;     // ❗반드시 재활성화
+        this.active = true;
         this.distanceTraveled = 0f;
+        this.hitEnemies.clear(); // ✅ 재활용 시 초기화
     }
 
     @Override
     public void draw(Canvas canvas) {
-        if (!active) {
-            Log.d("Bullet", "draw() skipped: not active");
-            return;
-        }
+        if (!active) return;
 
         Paint paint = new Paint();
         paint.setColor(0xFFFFFF00); // 노란색
         canvas.drawCircle(x - GameView.offsetX, y - GameView.offsetY, radius, paint);
-        Log.d("Bullet", "draw(): x=" + x + ", y=" + y);
     }
 
     @Override
@@ -97,7 +95,7 @@ public class Bullet implements IGameObject, IRecyclable {
     }
 
     public void deactivate() {
-        Scene.top().remove(MainScene.Layer.bullet, this); // ✅ remove 호출
+        Scene.top().remove(MainScene.Layer.bullet, this);
     }
 
     public RectF getCollisionRect() {
