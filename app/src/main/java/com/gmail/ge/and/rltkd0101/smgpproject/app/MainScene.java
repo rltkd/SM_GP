@@ -22,6 +22,7 @@ public class MainScene extends Scene {
     private float elapsedPlayTime = 0f;
 
     public MainScene(Weapon weapon) {
+        PlayerStats.reset();
         initLayers(Layer.COUNT);
 
         // 배경

@@ -37,6 +37,7 @@ public class GameOverPopupScene extends Scene {
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             GameView.view.popAllScenes(); // 전체 씬 정리
+            PlayerStats.reset();
             return true;
         }
         return false;
