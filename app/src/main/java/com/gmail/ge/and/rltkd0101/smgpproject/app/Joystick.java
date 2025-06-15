@@ -8,13 +8,16 @@ import android.view.MotionEvent;
 
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.interfaces.IGameObject;
 import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.interfaces.ITouchable;
+import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.view.GameView;
+import com.gmail.ge.and.rltkd0101.smgpproject.a2dg.framework.view.Metrics;
 
 public class Joystick implements IGameObject, ITouchable {
-    private final float baseRadius = 150f; // 외곽 원 반지름
-    private final float hatRadius = 50f; // 안쪽 원 반지름
-    private final PointF center = new PointF(200f, 700f); // 조이스틱 위치 (왼쪽 아래 고정)
-    private final PointF actuator = new PointF(0f, 0f); // 방향 벡터
+    private final float baseRadius = 150f;
+    private final float hatRadius = 50f;
+    private final PointF center = new PointF();
+    private final PointF actuator = new PointF(0f, 0f);
     private boolean isPressed = false;
+    private int pointerId = -1;
 
     private Player player;
     private Paint basePaint, hatPaint;
@@ -23,11 +26,11 @@ public class Joystick implements IGameObject, ITouchable {
         this.player = player;
 
         basePaint = new Paint();
-        basePaint.setColor(Color.argb(100, 0, 0, 0)); // 반투명 회색
+        basePaint.setColor(Color.argb(100, 0, 0, 0));
         basePaint.setStyle(Paint.Style.FILL);
 
         hatPaint = new Paint();
-        hatPaint.setColor(Color.argb(180, 255, 255, 255)); // 반투명 흰색
+        hatPaint.setColor(Color.argb(180, 255, 255, 255));
         hatPaint.setStyle(Paint.Style.FILL);
     }
 
@@ -41,6 +44,8 @@ public class Joystick implements IGameObject, ITouchable {
 
     @Override
     public void draw(Canvas canvas) {
+        if (!isPressed) return;
+
         canvas.drawCircle(center.x, center.y, baseRadius, basePaint);
         float hatX = center.x + actuator.x * baseRadius;
         float hatY = center.y + actuator.y * baseRadius;
@@ -49,26 +54,64 @@ public class Joystick implements IGameObject, ITouchable {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        float dx = event.getX() - center.x;
-        float dy = event.getY() - center.y;
-        float distance = (float) Math.sqrt(dx * dx + dy * dy);
+        int action = event.getActionMasked();
+        int actionIndex = event.getActionIndex();
 
-        switch (event.getAction()) {
+        switch (action) {
             case MotionEvent.ACTION_DOWN:
-            case MotionEvent.ACTION_MOVE:
-                if (distance < baseRadius) {
-                    actuator.set(dx / baseRadius, dy / baseRadius);
-                } else {
-                    actuator.set(dx / distance, dy / distance);
+            case MotionEvent.ACTION_POINTER_DOWN:
+                if (!isPressed) {
+                    pointerId = event.getPointerId(actionIndex);
+                    float[] logicPos = toLogicalCoords(event.getX(actionIndex), event.getY(actionIndex));
+                    center.set(logicPos[0], logicPos[1]);
+                    isPressed = true;
+                    updateActuator(logicPos[0], logicPos[1]);
+                    return true;
                 }
-                isPressed = true;
-                return true;
+                break;
+
+            case MotionEvent.ACTION_MOVE:
+                if (isPressed) {
+                    int index = event.findPointerIndex(pointerId);
+                    if (index != -1 && index < event.getPointerCount()) {
+                        float[] logicPos = toLogicalCoords(event.getX(index), event.getY(index));
+                        updateActuator(logicPos[0], logicPos[1]);
+                        return true;
+                    }
+                }
+                break;
 
             case MotionEvent.ACTION_UP:
-                actuator.set(0f, 0f);
-                isPressed = false;
-                return true;
+            case MotionEvent.ACTION_POINTER_UP:
+            case MotionEvent.ACTION_CANCEL:
+                int releasedId = event.getPointerId(actionIndex);
+                if (isPressed && releasedId == pointerId) {
+                    isPressed = false;
+                    pointerId = -1;
+                    actuator.set(0f, 0f);
+                    return true;
+                }
+                break;
         }
+
         return false;
+    }
+
+    private void updateActuator(float touchX, float touchY) {
+        float dx = touchX - center.x;
+        float dy = touchY - center.y;
+        float distance = (float) Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < baseRadius) {
+            actuator.set(dx / baseRadius, dy / baseRadius);
+        } else {
+            actuator.set(dx / distance, dy / distance);
+        }
+    }
+
+    private float[] toLogicalCoords(float screenX, float screenY) {
+        float scaleX = (float) GameView.view.getWidth() / Metrics.width;
+        float scaleY = (float) GameView.view.getHeight() / Metrics.height;
+        return new float[] { screenX / scaleX, screenY / scaleY };
     }
 }
