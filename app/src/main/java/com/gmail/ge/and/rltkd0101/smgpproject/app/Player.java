@@ -182,7 +182,7 @@ public class Player extends AnimSprite implements IBoxCollidable {
     public float getDamage() { return PlayerStats.attack; }
 
     public RectF getHitBox() {
-        float scale = 0.7f;
+        float scale = 0.6f;
         float w = width * scale;
         float h = height * scale;
         return new RectF(x - w / 2, y - h / 2, x + w / 2, y + h / 2);

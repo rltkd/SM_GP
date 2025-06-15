@@ -54,7 +54,7 @@ public class Enemy extends Sprite implements IRecyclable, IBoxCollidable {
         switch (type) {
             case SLIME:
                 setImageResourceId(R.mipmap.slime);
-                this.speed = 40f;
+                this.speed = 30f;
                 this.hp = 2f * hpMultiplier;
                 this.damage = 2f * dmgMultiplier;
                 setScale(1.0f);
@@ -68,7 +68,7 @@ public class Enemy extends Sprite implements IRecyclable, IBoxCollidable {
                 break;
             case GHOST:
                 setImageResourceId(R.mipmap.ghost);
-                this.speed = 60f;
+                this.speed = 50f;
                 this.hp = 1f * hpMultiplier;
                 this.damage = 1f * dmgMultiplier;
                 setScale(0.6f);
@@ -140,7 +140,7 @@ public class Enemy extends Sprite implements IRecyclable, IBoxCollidable {
     }
 
     private void resolveOverlapWithPlayer() {
-        float overlapDistance = 8f;
+        float overlapDistance = 10f;
         float dx = x - target.getX();
         float dy = y - target.getY();
         float distance = (float) Math.sqrt(dx * dx + dy * dy);
@@ -174,11 +174,12 @@ public class Enemy extends Sprite implements IRecyclable, IBoxCollidable {
     }
 
     public RectF getHitBox() {
-        return new RectF(
-                x - width / 2, y - height / 2,
-                x + width / 2, y + height / 2
-        );
+        float scale = 0.7f;
+        float w = width * scale;
+        float h = height * scale;
+        return new RectF(x - w / 2, y - h / 2, x + w / 2, y + h / 2);
     }
+
 
     @Override
     public RectF getCollisionRect() {
@@ -195,7 +196,7 @@ public class Enemy extends Sprite implements IRecyclable, IBoxCollidable {
 
         if (hp <= 0) {
             if (target instanceof Player) {
-                ((Player) target).gainExp(25);
+                ((Player) target).gainExp(30);
                 ((Player) target).healOnKill();
             }
 
