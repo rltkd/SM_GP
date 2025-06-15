@@ -1,6 +1,9 @@
 # Field Survivor  
 **2019180014 백기상**
 
+# 발표링크
+https://youtu.be/CdmP5AeByxk
+
 ---
 
 ## 🎮 프로젝트 개요
